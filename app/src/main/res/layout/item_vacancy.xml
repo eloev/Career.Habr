@@ -48,7 +48,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="CompanyName" />
+            android:text="CompanyName" />
 
         <TextView
             android:id="@+id/vacancyDate"
@@ -58,7 +58,7 @@
             app:layout_constraintHorizontal_bias="1"
             app:layout_constraintStart_toEndOf="@id/companyName"
             app:layout_constraintTop_toTopOf="parent"
-            tools:text="30 october" />
+            android:text="30 october" />
 
         <TextView
             android:id="@+id/position"
@@ -71,7 +71,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toBottomOf="@id/companyName"
-            tools:text="Junior Developer Android Kotlin" />
+            android:text="Junior Developer Android Kotlin" />
 
         <TextView
             android:id="@+id/metaInfo1"
@@ -82,7 +82,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toBottomOf="@id/position"
-            tools:text="Moscow" />
+            android:text="Moscow" />
 
         <TextView
             android:id="@+id/metaInfo2"
@@ -93,7 +93,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/metaInfo1"
             app:layout_constraintTop_toBottomOf="@id/position"
-            tools:text="Full time work day" />
+            android:text="Full time work day" />
 
         <TextView
             android:id="@+id/metaInfo3"
@@ -105,7 +105,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toBottomOf="@id/metaInfo1"
-            tools:text="You can remotely" />
+            android:text="You can remotely" />
 
         <TextView
             android:id="@+id/salary"
@@ -118,7 +118,7 @@
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toBottomOf="@id/metaInfo3"
-            tools:text="от 280 000 до 400 000 ₽" />
+            android:text="от 280 000 до 400 000 ₽" />
 
         <TextView
             android:id="@+id/skill"
@@ -129,7 +129,7 @@
             app:layout_constraintEnd_toEndOf="@id/marginEnd"
             app:layout_constraintStart_toEndOf="@id/logo"
             app:layout_constraintTop_toBottomOf="@id/salary"
-            tools:text="Приложения, Средний (Middle) · Kotlin · Разработка под Android · Разработка мобильных приложений · Android studio · Java · Git · Linux · ООП · REST" />
+            android:text="Приложения, Средний (Middle) · Kotlin · Разработка под Android · Разработка мобильных приложений · Android studio · Java · Git · Linux · ООП · REST" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

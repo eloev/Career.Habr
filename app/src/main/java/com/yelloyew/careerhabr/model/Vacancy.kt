@@ -8,5 +8,6 @@ data class Vacancy(
     var skill: String = "",
     var logo: String = "",
     var date: String = "",
-    var url: String = ""
+    var url: String = "",
+    var itemPosition: Int = 0
 )

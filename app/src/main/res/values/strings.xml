@@ -1,3 +1,18 @@
 <resources>
     <string name="app_name">Career.Habr</string>
+    <string name="item_search">Поиск</string>
+    <string name="search_hint">kotlin</string>
+    <string name="remote">Можно удалённо</string>
+    <string name="salary_shown">Зарплата указана</string>
+    <string name="item_salary">Зарплата</string>
+    <string name="skill">Квалификация</string>
+    <string name="any_skill">Любая</string>
+    <string-array name="skills">
+        <item>Любая</item>
+        <item>Стажёр(Intern)</item>
+        <item>Младший(Junior)</item>
+        <item>Средний(Middle)</item>
+        <item>Старший(Senior)</item>
+        <item>Ведущий(Lead)</item>
+    </string-array>
 </resources>

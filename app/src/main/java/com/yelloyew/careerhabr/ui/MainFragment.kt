@@ -1,40 +1,51 @@
 package com.yelloyew.careerhabr.ui
 
+import android.annotation.SuppressLint
+import android.app.Activity
+import android.content.Context
+import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
-import androidx.fragment.app.Fragment
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.ImageView
-import android.widget.TextView
+import android.view.*
+import android.view.inputmethod.InputMethodManager
+import android.widget.ArrayAdapter
+import android.widget.AutoCompleteTextView
+import android.widget.Toast
+import android.widget.Toast.LENGTH_SHORT
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
+import androidx.core.widget.doAfterTextChanged
+import androidx.fragment.app.DialogFragment
+import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.lifecycle.lifecycleScope
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yelloyew.careerhabr.MainViewModel
+import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.databinding.FragmentMainBinding
 import com.yelloyew.careerhabr.databinding.ItemVacancyBinding
 import com.yelloyew.careerhabr.model.Vacancy
-import kotlinx.coroutines.launch
 
 class MainFragment : Fragment() {
 
     private lateinit var _binding: FragmentMainBinding
     private val binding get() = _binding
 
-    private lateinit var recyclerView: RecyclerView
     private var adapter: RecyclerAdapter = RecyclerAdapter()
 
     private val mainViewModel: MainViewModel by viewModels()
 
+    private lateinit var searchItem: MenuItem
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        setHasOptionsMenu(true)
     }
 
     override fun onCreateView(
@@ -46,29 +57,148 @@ class MainFragment : Fragment() {
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = adapter
 
-
         binding.refresh.isRefreshing = true
+
         mainViewModel.getData().observe(
             viewLifecycleOwner,
             Observer {
                 adapter.setData(it)
-                adapter.notifyItemRangeInserted(10*(mainViewModel.page-1), 10*(mainViewModel.page))
+                //adapter.notifyItemRangeInserted(15 * (mainViewModel.page - 1) + 1, 15 * (mainViewModel.page))
+                adapter.notifyDataSetChanged()
                 binding.refresh.isRefreshing = false
-                Log.d("tag", "$it")
             })
 
         binding.refresh.setOnRefreshListener {
             binding.refresh.isRefreshing = false
-            mainViewModel.page = mainViewModel.page + 1
+        }
+
+        //remote button
+        binding.remoteTextview.setOnClickListener {
+            if (mainViewModel.remote == "") {
+                binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.ic_done
+                    ), null, null, null
+                )
+                mainViewModel.remote = "true"
+            } else if (mainViewModel.remote == "true") {
+                binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                    getDrawable(
+                        requireContext(),
+                        R.drawable.ic_close
+                    ), null, null, null
+                )
+                mainViewModel.remote = ""
+            }
+            mainViewModel.getData()
+            binding.refresh.isRefreshing = true
+        }
+
+        //spinner
+        val items = resources.getStringArray(R.array.skills)
+        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+        (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
+        binding.menuSkillTextview.setOnItemClickListener { _, _, i, _ ->
+            when (i) {
+                0 -> {
+                    mainViewModel.qid = ""
+                }
+                1 -> {
+                    mainViewModel.qid = "1"
+                }
+                2 -> {
+                    mainViewModel.qid = "3"
+                }
+                3 -> {
+                    mainViewModel.qid = "4"
+                }
+                4 -> {
+                    mainViewModel.qid = "5"
+                }
+                5 -> {
+                    mainViewModel.qid = "6"
+                }
+            }
             mainViewModel.getData()
         }
+        //spinner end
 
         return binding.root
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.menu_main_fragment, menu)
+        searchItem = menu.findItem(R.id.menu_item_search)
+    }
 
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+            R.id.menu_item_search -> {
+                if (binding.searchLayout.isVisible) {
+                    closeSearch()
+                } else {
+                    binding.searchLayout.isVisible = true
+                    binding.searchBackground.isVisible = true
+                    searchItem.setIcon(R.drawable.ic_close)
+
+                    binding.searchBackgroundClick.setOnClickListener {
+                        closeSearch()
+                        mainViewModel.query = binding.searchText.text.toString()
+                    }
+
+                    binding.searchText.setOnKeyListener(object : View.OnKeyListener {
+                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                            // if the event is a key down event on the enter button
+                            if (event.action == KeyEvent.ACTION_DOWN &&
+                                keyCode == KeyEvent.KEYCODE_ENTER
+                            ) {
+                                closeSearch()
+                                binding.searchText.isCursorVisible = false
+                                mainViewModel.query = binding.searchText.text.toString()
+                                mainViewModel.getData()
+                                binding.refresh.isRefreshing = true
+                                return true
+                            }
+                            return false
+                        }
+                    })
+
+                    binding.salaryText.setOnKeyListener(object : View.OnKeyListener {
+                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                            // if the event is a key down event on the enter button
+                            if (event.action == KeyEvent.ACTION_DOWN &&
+                                keyCode == KeyEvent.KEYCODE_ENTER
+                            ) {
+                                closeSearch()
+                                binding.salaryText.isCursorVisible = false
+                                mainViewModel.salary = binding.salaryText.text.toString()
+                                mainViewModel.getData()
+                                binding.refresh.isRefreshing = true
+                                return true
+                            }
+                            return false
+                        }
+                    })
+                }
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
+    }
+
+    private fun closeSearch() {
+        binding.searchLayout.isVisible = false
+        binding.searchBackground.isVisible = false
+        searchItem.setIcon(R.drawable.ic_search)
+        view?.let { activity?.hideKeyboard(it) }
+    }
+
+    fun Context.hideKeyboard(view: View) {
+        val inputMethodManager =
+            getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
+        inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private inner class ViewHolder(val bindingItem: ItemVacancyBinding) :
@@ -105,6 +235,7 @@ class MainFragment : Fragment() {
 
     private inner class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
         private var vacancies: MutableList<Vacancy> = mutableListOf()
+        private var initUpdate = true
 
         fun setData(newVacancyList: MutableList<Vacancy>) {
             val diffUtil = VacancyDiffCallback(vacancies, newVacancyList)
@@ -114,6 +245,7 @@ class MainFragment : Fragment() {
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            initUpdate = true
             return ViewHolder(
                 ItemVacancyBinding.inflate(
                     LayoutInflater.from(parent.context),
@@ -126,10 +258,11 @@ class MainFragment : Fragment() {
         override fun onBindViewHolder(holder: ViewHolder, position: Int) {
             val vacancy = vacancies[position]
             holder.bind(vacancy)
-            if (position % 10 == 8){
+            if (vacancies.size - position == 4 && initUpdate) {
                 mainViewModel.page = mainViewModel.page + 1
                 mainViewModel.getData()
                 binding.refresh.isRefreshing = true
+                initUpdate = false
             }
         }
 

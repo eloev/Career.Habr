@@ -2,17 +2,15 @@ package com.yelloyew.careerhabr.repository
 
 import android.content.Context
 import android.util.Log
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
 import com.yelloyew.careerhabr.model.Vacancy
 import org.jsoup.Jsoup
 import java.io.IOException
 
 class Repository private constructor(context: Context) {
 
-    private val listData = mutableListOf<Vacancy>()
+    private var listData = mutableListOf<Vacancy>()
 
-    fun getVacanciesList(url: String) : MutableList<Vacancy> {
+    fun getVacanciesList(url: String, page: Int) : MutableList<Vacancy> {
         try {
             val doc = Jsoup.connect(url).get()
             val vacancies = doc.select("div.vacancy-card")
@@ -43,13 +41,17 @@ class Repository private constructor(context: Context) {
 
                 val date = vacancy.select("div.vacancy-card__date")
                     .text()
-
-                listData.add(Vacancy(company, position, metaInfo, salary, skill, logo, date, vacancyUrl))
+                val itemPosition = i + 1 + 15*(page-1)
+                listData.add(Vacancy(company, position, metaInfo, salary, skill, logo, date, vacancyUrl, itemPosition))
             }
         } catch (e: IOException) {
             e.printStackTrace()
         }
         return listData
+    }
+
+    fun eraseList() {
+        listData = mutableListOf<Vacancy>()
     }
 
     companion object{
