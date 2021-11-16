@@ -9,6 +9,7 @@ import java.io.IOException
 class Repository private constructor(context: Context) {
 
     private var listData = mutableListOf<Vacancy>()
+    private var vacancyInfo = ""
 
     fun getVacanciesList(url: String, page: Int) : MutableList<Vacancy> {
         try {
@@ -52,6 +53,28 @@ class Repository private constructor(context: Context) {
 
     fun eraseList() {
         listData = mutableListOf<Vacancy>()
+    }
+
+    fun currentVacancyInfo(url: String) : String{
+        try {
+            val doc = Jsoup.connect(url).get()
+            val string= doc.select("div.style-ugc").text()
+            val strong = doc.select("div.style-ugc strong").text()
+            val words = strong.split(":").toTypedArray()
+            for (i in words.indices){
+                words[i] = words[i].replace(" ", "")
+            }
+            val result = arrayOfNulls<String>(words.size+1)
+            result[0] = string
+
+            for (i in words.indices){
+                result[i+1] = result[i]!!.replaceFirst(words[i], "\n" + words[i]).trim()
+            }
+            vacancyInfo = result.last().toString().prependIndent("     ")
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return vacancyInfo
     }
 
     companion object{

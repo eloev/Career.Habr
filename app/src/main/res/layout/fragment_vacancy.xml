@@ -1,0 +1,201 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/green"
+    tools:context=".ui.VacancyFragment">
+
+    <com.google.android.material.card.MaterialCardView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginEnd="8dp"
+        android:layout_marginBottom="8dp"
+        app:cardCornerRadius="8dp">
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="8dp">
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/marginStart"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_begin="8dp" />
+
+                <androidx.constraintlayout.widget.Guideline
+                    android:id="@+id/marginEnd"
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:orientation="vertical"
+                    app:layout_constraintGuide_end="8dp" />
+
+                <ImageView
+                    android:id="@+id/logo"
+                    android:layout_width="72dp"
+                    android:layout_height="72dp"
+                    android:layout_marginTop="8dp"
+                    android:contentDescription="@string/app_name"
+                    app:layout_constraintEnd_toStartOf="@id/companyName"
+                    app:layout_constraintStart_toStartOf="@id/marginStart"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:background="@color/teal_200" />
+
+                <TextView
+                    android:id="@+id/companyName"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="CompanyName" />
+
+                <TextView
+                    android:id="@+id/vacancyDate"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintHorizontal_bias="1"
+                    app:layout_constraintStart_toEndOf="@id/companyName"
+                    app:layout_constraintTop_toTopOf="parent"
+                    tools:text="30 october" />
+
+                <TextView
+                    android:id="@+id/position"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/black"
+                    android:textSize="18sp"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toBottomOf="@id/companyName"
+                    tools:text="Junior Developer Android Kotlin" />
+
+                <TextView
+                    android:id="@+id/metaInfo1"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintEnd_toEndOf="@id/metaInfo2"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toBottomOf="@id/position"
+                    tools:text="Moscow" />
+
+                <TextView
+                    android:id="@+id/metaInfo2"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/metaInfo1"
+                    app:layout_constraintTop_toBottomOf="@id/position"
+                    tools:text="Full time work day" />
+
+                <TextView
+                    android:id="@+id/metaInfo3"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toBottomOf="@id/metaInfo1"
+                    tools:text="You can remotely" />
+
+                <TextView
+                    android:id="@+id/salary"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:textColor="@color/green"
+                    android:visibility="gone"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toBottomOf="@id/metaInfo3"
+                    tools:text="от 280 000 до 400 000 ₽" />
+
+                <TextView
+                    android:id="@+id/skill"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="16dp"
+                    android:layout_marginTop="4dp"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintStart_toEndOf="@id/logo"
+                    app:layout_constraintTop_toBottomOf="@id/salary"
+                    tools:text="Приложения, Средний (Middle) · Kotlin · Разработка под Android · Разработка мобильных приложений · Android studio · Java · Git · Linux · ООП · REST" />
+
+                <TextView
+                    android:id="@+id/about_vacancy"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:text="@string/about_vacancy"
+                    android:textSize="16sp"
+                    android:textColor="@color/black"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintStart_toStartOf="@id/marginStart"
+                    app:layout_constraintTop_toBottomOf="@id/skill" />
+
+                <ProgressBar
+                    android:id="@+id/progressBar"
+                    style="?android:attr/progressBarStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:indeterminateTint="?attr/colorPrimary"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintStart_toStartOf="@id/marginStart"
+                    app:layout_constraintTop_toBottomOf="@id/about_vacancy" />
+
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:layout_marginBottom="8dp"
+                    android:orientation="vertical"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="@id/marginEnd"
+                    app:layout_constraintStart_toStartOf="@id/marginStart"
+                    app:layout_constraintTop_toBottomOf="@id/about_vacancy">
+
+                    <TextView
+                        android:id="@+id/vacancyInfo"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        tools:text="Проект: Развитие и поддержка сайта крупной ритейл сети электроники. Технологический стек: Kotlin, Java 11; Spring framework, Spring Boot 2, Spring Data, Spring Cloud, Spring batch; git, gitlab, maven, teamcity; hibernate, mysql; elasticsearch 6; hazelcast; mesos/marathon; rabbitmq; docker; groovy/spock Требования: Желание начать разрабатывать на Kotlin Знание реактивного программирования (reactor/webflux) Опыт работы с очередями : Rabbit MQ/Kafka Опыт с NoSQL БД Web services - REST, SOAP (jakson) опыт работы с GIT Сборщик Maven Опыт работы с Elasticsearch (настройка и использование). Понимание принципов микросервисной архитектуры Опыт работы Java программистом Знание Spring boot Опыт с Java 8 или выше Уверенное знание и понимание принципов ООП Знание основных шаблонов проектирования, основных структур данных (стеки, очереди и т. п.) Понимание принципов разработки и проектирования информационных систем (отказоустойчивость, кэширование, масштабирование и т. п.) Будет плюсом: Наличие Oracle JavaПроект: Развитие и поддержка сайта крупной ритейл сети электроники. Технологический стек: Kotlin, Java 11; Spring framework, Spring Boot 2, Spring Data, Spring Cloud, Spring batch; git, gitlab, maven, teamcity; hibernate, mysql; elasticsearch 6; hazelcast; mesos/marathon; rabbitmq; docker; groovy/spock Требования: Желание начать разрабатывать на Kotlin Знание реактивного программирования (reactor/webflux) Опыт работы с очередями : Rabbit MQ/Kafka Опыт с NoSQL БД Web services - REST, SOAP (jakson) опыт работы с GIT Сборщик Maven Опыт работы с Elasticsearch (настройка и использование). Понимание принципов микросервисной архитектуры Опыт работы Java программистом Знание Spring boot Опыт с Java 8 или выше Уверенное знание и понимание принципов ООП Знание основных шаблонов проектирования, основных структур данных (стеки, очереди и т. п.) Понимание принципов разработки и проектирования информационных систем (отказоустойчивость, кэширование, масштабирование и т. п.) Будет плюсом: Наличие Oracle Java" />
+
+                    <Button
+                        android:id="@+id/share_button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="end"
+                        android:text="@string/share_vacancy"
+                        android:visibility="invisible"
+                        android:textAllCaps="false"
+                        app:drawableLeftCompat="@drawable/ic_share" />
+
+                </LinearLayout>
+            </androidx.constraintlayout.widget.ConstraintLayout>
+        </ScrollView>
+    </com.google.android.material.card.MaterialCardView>
+</FrameLayout>

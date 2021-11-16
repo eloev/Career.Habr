@@ -1,22 +1,15 @@
 package com.yelloyew.careerhabr.ui
 
-import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Context
-import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
 import android.widget.AutoCompleteTextView
-import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
-import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
-import androidx.core.widget.doAfterTextChanged
-import androidx.fragment.app.DialogFragment
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
@@ -54,25 +47,29 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        binding.recyclerView.layoutManager = LinearLayoutManager(context)
-        binding.recyclerView.adapter = adapter
+        binding.apply {
+            recyclerView.layoutManager = LinearLayoutManager(context)
+            recyclerView.adapter = adapter
 
-        binding.refresh.isRefreshing = true
+            refresh.isRefreshing = true
 
+            refresh.setOnRefreshListener {
+                refresh.isRefreshing = false
+            }
+        }
         mainViewModel.getData().observe(
             viewLifecycleOwner,
             Observer {
-                adapter.setData(it)
-                //adapter.notifyItemRangeInserted(15 * (mainViewModel.page - 1) + 1, 15 * (mainViewModel.page))
-                adapter.notifyDataSetChanged()
+                adapter.apply {
+                    setData(it)
+                    notifyDataSetChanged()
+                    //notifyItemRangeInserted(15 * (mainViewModel.page - 1) + 1, 15 * (mainViewModel.page))
+                }
                 binding.refresh.isRefreshing = false
             })
 
-        binding.refresh.setOnRefreshListener {
-            binding.refresh.isRefreshing = false
-        }
 
-        //remote button
+        //search view remote button
         binding.remoteTextview.setOnClickListener {
             if (mainViewModel.remote == "") {
                 binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
@@ -95,7 +92,7 @@ class MainFragment : Fragment() {
             binding.refresh.isRefreshing = true
         }
 
-        //spinner
+        //search view spinner
         val items = resources.getStringArray(R.array.skills)
         val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
         (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
@@ -122,7 +119,6 @@ class MainFragment : Fragment() {
             }
             mainViewModel.getData()
         }
-        //spinner end
 
         return binding.root
     }
@@ -139,48 +135,63 @@ class MainFragment : Fragment() {
                 if (binding.searchLayout.isVisible) {
                     closeSearch()
                 } else {
-                    binding.searchLayout.isVisible = true
-                    binding.searchBackground.isVisible = true
+                    // поиск открыт
                     searchItem.setIcon(R.drawable.ic_close)
+                    binding.apply {
+                        searchLayout.isVisible = true
+                        searchBackground.isVisible = true
 
-                    binding.searchBackgroundClick.setOnClickListener {
-                        closeSearch()
-                        mainViewModel.query = binding.searchText.text.toString()
+                        // фон поиска
+                        searchBackgroundClick.setOnClickListener {
+                            mainViewModel.query = searchText.text.toString()
+                            closeSearch()
+                        }
+
+                        // нажатие enter в поиске
+                        binding.searchText.setOnKeyListener(object : View.OnKeyListener {
+                            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                                // if the event is a key down event on the enter button
+                                if (event.action == KeyEvent.ACTION_DOWN &&
+                                    keyCode == KeyEvent.KEYCODE_ENTER
+                                ) {
+                                    closeSearch()
+                                    binding.apply {
+                                        searchText.isCursorVisible = false
+                                        refresh.isRefreshing = true
+                                    }
+                                    mainViewModel.apply {
+                                        query = binding.searchText.text.toString()
+                                        getData()
+                                    }
+                                    return true
+                                }
+                                return false
+                            }
+                        })
+
+                        // нажатие enter в цене
+                        binding.salaryText.setOnKeyListener(object : View.OnKeyListener {
+                            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                                // if the event is a key down event on the enter button
+                                if (event.action == KeyEvent.ACTION_DOWN &&
+                                    keyCode == KeyEvent.KEYCODE_ENTER
+                                ) {
+                                    closeSearch()
+                                    binding.apply {
+                                        salaryText.isCursorVisible = false
+                                        refresh.isRefreshing = true
+                                    }
+
+                                    mainViewModel.apply {
+                                        salary = binding.salaryText.text.toString()
+                                        getData()
+                                    }
+                                    return true
+                                }
+                                return false
+                            }
+                        })
                     }
-
-                    binding.searchText.setOnKeyListener(object : View.OnKeyListener {
-                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                            // if the event is a key down event on the enter button
-                            if (event.action == KeyEvent.ACTION_DOWN &&
-                                keyCode == KeyEvent.KEYCODE_ENTER
-                            ) {
-                                closeSearch()
-                                binding.searchText.isCursorVisible = false
-                                mainViewModel.query = binding.searchText.text.toString()
-                                mainViewModel.getData()
-                                binding.refresh.isRefreshing = true
-                                return true
-                            }
-                            return false
-                        }
-                    })
-
-                    binding.salaryText.setOnKeyListener(object : View.OnKeyListener {
-                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                            // if the event is a key down event on the enter button
-                            if (event.action == KeyEvent.ACTION_DOWN &&
-                                keyCode == KeyEvent.KEYCODE_ENTER
-                            ) {
-                                closeSearch()
-                                binding.salaryText.isCursorVisible = false
-                                mainViewModel.salary = binding.salaryText.text.toString()
-                                mainViewModel.getData()
-                                binding.refresh.isRefreshing = true
-                                return true
-                            }
-                            return false
-                        }
-                    })
                 }
                 true
             }
@@ -189,47 +200,59 @@ class MainFragment : Fragment() {
     }
 
     private fun closeSearch() {
-        binding.searchLayout.isVisible = false
-        binding.searchBackground.isVisible = false
+        binding.apply {
+            searchLayout.isVisible = false
+            searchBackground.isVisible = false
+        }
         searchItem.setIcon(R.drawable.ic_search)
         view?.let { activity?.hideKeyboard(it) }
     }
 
-    fun Context.hideKeyboard(view: View) {
+    private fun Context.hideKeyboard(view: View) {
         val inputMethodManager =
             getSystemService(Activity.INPUT_METHOD_SERVICE) as InputMethodManager
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
     private inner class ViewHolder(val bindingItem: ItemVacancyBinding) :
-        RecyclerView.ViewHolder(bindingItem.root) {
+        RecyclerView.ViewHolder(bindingItem.root), View.OnClickListener{
 
         private lateinit var vacancy: Vacancy
 
+        init {
+            itemView.setOnClickListener(this)
+        }
+
         fun bind(vacancy: Vacancy) {
             this.vacancy = vacancy
-            bindingItem.companyName.text = vacancy.company
-            bindingItem.vacancyDate.text = vacancy.date
-            bindingItem.position.text = vacancy.position
-
-            if (vacancy.salary.isNotBlank()) {
-                bindingItem.salary.text = vacancy.salary
-                bindingItem.salary.isVisible = true
-            }
-            bindingItem.skill.text = vacancy.skill
-            bindingItem.metaInfo1.text = vacancy.metaInfo[0]
-            if (vacancy.metaInfo.size >= 2) {
-                bindingItem.metaInfo2.text = vacancy.metaInfo[1]
-                bindingItem.metaInfo2.isVisible = true
-            }
-            if (vacancy.metaInfo.size == 3) {
-                bindingItem.metaInfo3.text = vacancy.metaInfo[2]
-                bindingItem.metaInfo3.isVisible = true
+            bindingItem.apply {
+                companyName.text = vacancy.company
+                vacancyDate.text = vacancy.date
+                position.text = vacancy.position
+                if (vacancy.salary.isNotBlank()) {
+                    salary.text = vacancy.salary
+                    salary.isVisible = true
+                }
+                skill.text = vacancy.skill
+                metaInfo1.text = vacancy.metaInfo[0]
+                if (vacancy.metaInfo.size >= 2) {
+                    metaInfo2.text = vacancy.metaInfo[1]
+                    metaInfo2.isVisible = true
+                }
+                if (vacancy.metaInfo.size == 3) {
+                    metaInfo3.text = vacancy.metaInfo[2]
+                    metaInfo3.isVisible = true
+                }
             }
             Glide.with(context!!)
                 .load(vacancy.logo)
                 .transition(DrawableTransitionOptions.withCrossFade())
                 .into(bindingItem.logo)
+        }
+
+        override fun onClick(v: View?) {
+            val action = MainFragmentDirections.actionMainFragmentToVacancyFragment(vacancy)
+            findNavController().navigate(action)
         }
     }
 
@@ -259,8 +282,10 @@ class MainFragment : Fragment() {
             val vacancy = vacancies[position]
             holder.bind(vacancy)
             if (vacancies.size - position == 4 && initUpdate) {
-                mainViewModel.page = mainViewModel.page + 1
-                mainViewModel.getData()
+                mainViewModel.apply {
+                    page += 1
+                    getData()
+                }
                 binding.refresh.isRefreshing = true
                 initUpdate = false
             }

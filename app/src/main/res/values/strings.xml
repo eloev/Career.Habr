@@ -15,4 +15,7 @@
         <item>Старший(Senior)</item>
         <item>Ведущий(Lead)</item>
     </string-array>
+    <string name="share_vacancy">Поделиться</string>
+    <string name="about_vacancy">Подробнее о вакансии:</string>
+    <string name="share_url_to">Поделиться с помощью:</string>
 </resources>

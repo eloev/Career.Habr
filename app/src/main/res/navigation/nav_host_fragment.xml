@@ -9,5 +9,21 @@
         android:id="@+id/mainFragment"
         android:name="com.yelloyew.careerhabr.ui.MainFragment"
         android:label="fragment_main"
-        tools:layout="@layout/fragment_main" />
+        tools:layout="@layout/fragment_main" >
+        <action
+            android:id="@+id/action_mainFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/vacancyFragment"
+        android:name="com.yelloyew.careerhabr.ui.VacancyFragment"
+        android:label="fragment_vacancy"
+        tools:layout="@layout/fragment_vacancy">
+        <argument
+            android:name="vacancy"
+            app:argType="com.yelloyew.careerhabr.model.Vacancy" />
+        <action
+            android:id="@+id/action_vacancyFragment_to_mainFragment"
+            app:destination="@id/mainFragment" />
+    </fragment>
 </navigation>
