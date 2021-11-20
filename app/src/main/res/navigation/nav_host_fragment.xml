@@ -25,5 +25,16 @@
         <action
             android:id="@+id/action_vacancyFragment_to_mainFragment"
             app:destination="@id/mainFragment" />
+        <action
+            android:id="@+id/action_vacancyFragment_to_likedFragment"
+            app:destination="@id/likedFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/likedFragment"
+        android:name="com.yelloyew.careerhabr.ui.LikedFragment"
+        android:label="LikedFragment" >
+        <action
+            android:id="@+id/action_likedFragment_to_vacancyFragment"
+            app:destination="@id/vacancyFragment" />
     </fragment>
 </navigation>

@@ -3,7 +3,6 @@ package com.yelloyew.careerhabr.ui
 import android.app.Activity
 import android.content.Context
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -13,24 +12,29 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import androidx.lifecycle.Observer
-import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
+import com.yelloyew.careerhabr.MainActivity
 import com.yelloyew.careerhabr.MainViewModel
 import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.databinding.FragmentMainBinding
 import com.yelloyew.careerhabr.databinding.ItemVacancyBinding
 import com.yelloyew.careerhabr.model.Vacancy
+import androidx.navigation.fragment.findNavController
+import com.yelloyew.careerhabr.adapter.MainSwipeAdapter
+import com.yelloyew.careerhabr.adapter.VacancyDiffCallback
+
 
 class MainFragment : Fragment() {
 
-    private lateinit var _binding: FragmentMainBinding
-    private val binding get() = _binding
+    private var _binding: FragmentMainBinding? = null
+    private val binding get() = _binding!!
 
-    private var adapter: RecyclerAdapter = RecyclerAdapter()
+    private var adapter = MainRecyclerAdapter()
 
     private val mainViewModel: MainViewModel by viewModels()
 
@@ -47,6 +51,8 @@ class MainFragment : Fragment() {
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
+        (requireActivity() as MainActivity).title = getString(R.string.app_name)
+
         binding.apply {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
@@ -57,17 +63,9 @@ class MainFragment : Fragment() {
                 refresh.isRefreshing = false
             }
         }
-        mainViewModel.getData().observe(
-            viewLifecycleOwner,
-            Observer {
-                adapter.apply {
-                    setData(it)
-                    notifyDataSetChanged()
-                    //notifyItemRangeInserted(15 * (mainViewModel.page - 1) + 1, 15 * (mainViewModel.page))
-                }
-                binding.refresh.isRefreshing = false
-            })
 
+        val itemTouchHelper = ItemTouchHelper(MainSwipeAdapter(adapter))
+        itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
         //search view remote button
         binding.remoteTextview.setOnClickListener {
@@ -94,7 +92,7 @@ class MainFragment : Fragment() {
 
         //search view spinner
         val items = resources.getStringArray(R.array.skills)
-        val adapter = ArrayAdapter(requireContext(), R.layout.list_item, items)
+        val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
         (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
         binding.menuSkillTextview.setOnItemClickListener { _, _, i, _ ->
             when (i) {
@@ -119,8 +117,19 @@ class MainFragment : Fragment() {
             }
             mainViewModel.getData()
         }
-
         return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        mainViewModel.getData().observe(
+            viewLifecycleOwner,
+            Observer {
+                adapter.apply {
+                    setData(it)
+                }
+                binding.refresh.isRefreshing = false
+            })
+        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -140,6 +149,7 @@ class MainFragment : Fragment() {
                     binding.apply {
                         searchLayout.isVisible = true
                         searchBackground.isVisible = true
+                        hideBottomNav(true)
 
                         // фон поиска
                         searchBackgroundClick.setOnClickListener {
@@ -150,7 +160,6 @@ class MainFragment : Fragment() {
                         // нажатие enter в поиске
                         binding.searchText.setOnKeyListener(object : View.OnKeyListener {
                             override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                                // if the event is a key down event on the enter button
                                 if (event.action == KeyEvent.ACTION_DOWN &&
                                     keyCode == KeyEvent.KEYCODE_ENTER
                                 ) {
@@ -206,6 +215,7 @@ class MainFragment : Fragment() {
         }
         searchItem.setIcon(R.drawable.ic_search)
         view?.let { activity?.hideKeyboard(it) }
+        hideBottomNav(false)
     }
 
     private fun Context.hideKeyboard(view: View) {
@@ -214,49 +224,17 @@ class MainFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private inner class ViewHolder(val bindingItem: ItemVacancyBinding) :
-        RecyclerView.ViewHolder(bindingItem.root), View.OnClickListener{
-
-        private lateinit var vacancy: Vacancy
-
-        init {
-            itemView.setOnClickListener(this)
-        }
-
-        fun bind(vacancy: Vacancy) {
-            this.vacancy = vacancy
-            bindingItem.apply {
-                companyName.text = vacancy.company
-                vacancyDate.text = vacancy.date
-                position.text = vacancy.position
-                if (vacancy.salary.isNotBlank()) {
-                    salary.text = vacancy.salary
-                    salary.isVisible = true
-                }
-                skill.text = vacancy.skill
-                metaInfo1.text = vacancy.metaInfo[0]
-                if (vacancy.metaInfo.size >= 2) {
-                    metaInfo2.text = vacancy.metaInfo[1]
-                    metaInfo2.isVisible = true
-                }
-                if (vacancy.metaInfo.size == 3) {
-                    metaInfo3.text = vacancy.metaInfo[2]
-                    metaInfo3.isVisible = true
-                }
-            }
-            Glide.with(context!!)
-                .load(vacancy.logo)
-                .transition(DrawableTransitionOptions.withCrossFade())
-                .into(bindingItem.logo)
-        }
-
-        override fun onClick(v: View?) {
-            val action = MainFragmentDirections.actionMainFragmentToVacancyFragment(vacancy)
-            findNavController().navigate(action)
-        }
+    private fun hideBottomNav(hide: Boolean) {
+        (activity as MainActivity).hideBottomNav(hide)
     }
 
-    private inner class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
+    override fun onDestroy() {
+        super.onDestroy()
+        _binding = null
+    }
+
+    inner class MainRecyclerAdapter() :
+        RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
         private var vacancies: MutableList<Vacancy> = mutableListOf()
         private var initUpdate = true
 
@@ -265,6 +243,12 @@ class MainFragment : Fragment() {
             val diffResult = DiffUtil.calculateDiff(diffUtil)
             vacancies = newVacancyList
             diffResult.dispatchUpdatesTo(this)
+            notifyDataSetChanged()
+        }
+
+        fun likeVacancy(position: Int) {
+            mainViewModel.addLike(vacancies[position])
+            notifyItemChanged(position)
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -291,29 +275,56 @@ class MainFragment : Fragment() {
             }
         }
 
-        override fun getItemCount() = vacancies.size
-    }
-
-    private inner class VacancyDiffCallback(
-        private val oldList: MutableList<Vacancy>,
-        private val newList: MutableList<Vacancy>
-    ) : DiffUtil.Callback() {
-
-        override fun getOldListSize(): Int = oldList.size
-        override fun getNewListSize(): Int = newList.size
-
-        override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldVacancy = oldList[oldItemPosition]
-            val newVacancy = newList[newItemPosition]
-            return oldVacancy.company == newVacancy.company
+        override fun getItemCount(): Int {
+            return if (vacancies.size != 0) {
+                binding.tvIfNull.isVisible = false
+                vacancies.size
+            } else {
+                binding.tvIfNull.isVisible = true
+                0
+            }
         }
 
-        override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-            val oldVacancy = oldList[oldItemPosition]
-            val newVacancy = newList[newItemPosition]
-            return oldVacancy == newVacancy
+        inner class ViewHolder(val bindingItem: ItemVacancyBinding) :
+            RecyclerView.ViewHolder(bindingItem.root), View.OnClickListener {
+
+            private lateinit var vacancy: Vacancy
+
+            init {
+                itemView.setOnClickListener(this)
+            }
+
+            fun bind(vacancy: Vacancy) {
+                this.vacancy = vacancy
+                bindingItem.apply {
+                    companyName.text = vacancy.company
+                    vacancyDate.text = vacancy.date
+                    position.text = vacancy.position
+                    if (vacancy.salary.isNotBlank()) {
+                        salary.text = vacancy.salary
+                        salary.isVisible = true
+                    }
+                    skill.text = vacancy.skill
+                    metaInfo1.text = vacancy.metaInfo[0]
+                    if (vacancy.metaInfo.size >= 2) {
+                        metaInfo2.text = vacancy.metaInfo[1]
+                        metaInfo2.isVisible = true
+                    }
+                    if (vacancy.metaInfo.size == 3) {
+                        metaInfo3.text = vacancy.metaInfo[2]
+                        metaInfo3.isVisible = true
+                    }
+                }
+                Glide.with(context!!)
+                    .load(vacancy.logo)
+                    .transition(DrawableTransitionOptions.withCrossFade())
+                    .into(bindingItem.logo)
+            }
+
+            override fun onClick(v: View) {
+                val action = MainFragmentDirections.actionMainFragmentToVacancyFragment(vacancy)
+                findNavController().navigate(action)
+            }
         }
-
     }
-
 }

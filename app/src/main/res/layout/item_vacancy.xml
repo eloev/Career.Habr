@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
-
 <com.google.android.material.card.MaterialCardView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -132,5 +131,25 @@
             tools:text="Приложения, Средний (Middle) · Kotlin · Разработка под Android · Разработка мобильных приложений · Android studio · Java · Git · Linux · ООП · REST" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <ImageView
+        android:id="@+id/like_background_imageview"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:visibility="invisible"
+        android:src="@drawable/like_background_drawable"
+        android:contentDescription="@string/like">
+    </ImageView>
+    <ImageView
+        android:id="@+id/like_imageview"
+        android:layout_width="match_parent"
+        android:layout_gravity="center"
+        android:layout_height="50dp"
+        android:layout_marginEnd="16dp"
+        android:visibility="invisible"
+        android:src="@drawable/ic_like"
+        android:scaleType="fitEnd"
+        android:contentDescription="@string/like">
+    </ImageView>
 
 </com.google.android.material.card.MaterialCardView>

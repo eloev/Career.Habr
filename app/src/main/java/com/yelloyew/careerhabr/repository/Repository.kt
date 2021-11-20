@@ -18,6 +18,10 @@ class Repository private constructor(context: Context) {
 
             for ((i, vacancy) in vacancies.withIndex()) {
 
+                val vacancyUrl = "https://career.habr.com" + vacancy.select("div.vacancy-card__title")
+                    .select("a")
+                    .attr("href")
+
                 val logo = vacancy.select("img.vacancy-card__icon")
                     .attr("src")
 
@@ -36,14 +40,10 @@ class Repository private constructor(context: Context) {
                 val skill = vacancy.select("div.vacancy-card__skills")
                     .text()
 
-                val vacancyUrl = "https://career.habr.com" + vacancy.select("div.vacancy-card__title")
-                    .select("a")
-                    .attr("href")
-
                 val date = vacancy.select("div.vacancy-card__date")
                     .text()
                 val itemPosition = i + 1 + 15*(page-1)
-                listData.add(Vacancy(company, position, metaInfo, salary, skill, logo, date, vacancyUrl, itemPosition))
+                listData.add(Vacancy(vacancyUrl, company, position, metaInfo, salary, skill, logo, date, itemPosition))
             }
         } catch (e: IOException) {
             e.printStackTrace()

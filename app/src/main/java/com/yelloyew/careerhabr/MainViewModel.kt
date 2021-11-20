@@ -5,6 +5,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yelloyew.careerhabr.model.Vacancy
+import com.yelloyew.careerhabr.repository.LikedRepository
 import com.yelloyew.careerhabr.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -15,6 +16,9 @@ class MainViewModel() : ViewModel() {
     private val repository = Repository.get()
     private var vacancies: MutableLiveData<MutableList<Vacancy>> = MutableLiveData()
     private var vacancyInfo: MutableLiveData<String> = MutableLiveData()
+
+    private val likedRepository = LikedRepository.get()
+    val likedListLiveData = likedRepository.getLiked()
 
     private var response = ""
     private var newResponse = ""
@@ -28,7 +32,7 @@ class MainViewModel() : ViewModel() {
     fun getData(): MutableLiveData<MutableList<Vacancy>> {
         viewModelScope.launch(Dispatchers.IO) {
             response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
-            if ( response != newResponse){
+            if (response != newResponse) {
                 repository.eraseList()
                 page = 1
                 newResponse = response
@@ -39,10 +43,18 @@ class MainViewModel() : ViewModel() {
         return vacancies
     }
 
-    fun getCurrentVacancyInfo(currentVacancyUrl: String) : MutableLiveData<String> {
+    fun getCurrentVacancyInfo(currentVacancyUrl: String): MutableLiveData<String> {
         viewModelScope.launch(Dispatchers.IO) {
             vacancyInfo.postValue(repository.currentVacancyInfo(currentVacancyUrl))
         }
         return vacancyInfo
+    }
+
+    fun addLike(vacancy: Vacancy) {
+        likedRepository.addLike(vacancy)
+    }
+
+    fun deleteLike(vacancy: Vacancy){
+        likedRepository.deleteLike(vacancy)
     }
 }

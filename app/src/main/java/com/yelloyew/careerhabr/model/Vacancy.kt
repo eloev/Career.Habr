@@ -1,10 +1,14 @@
 package com.yelloyew.careerhabr.model
 
 import android.os.Parcelable
-import kotlinx.android.parcel.Parcelize
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+import kotlinx.parcelize.Parcelize
 
+@Entity
 @Parcelize
 data class Vacancy(
+    @PrimaryKey var url: String = "",
     var company: String = "",
     var position: String = "",
     var metaInfo: List<String> = emptyList(),
@@ -12,6 +16,5 @@ data class Vacancy(
     var skill: String = "",
     var logo: String = "",
     var date: String = "",
-    var url: String = "",
     var itemPosition: Int = 0
 ) : Parcelable
