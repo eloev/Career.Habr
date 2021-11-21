@@ -1,7 +1,6 @@
 package com.yelloyew.careerhabr.repository
 
 import android.content.Context
-import android.util.Log
 import com.yelloyew.careerhabr.model.Vacancy
 import org.jsoup.Jsoup
 import java.io.IOException
@@ -52,7 +51,7 @@ class Repository private constructor(context: Context) {
     }
 
     fun eraseList() {
-        listData = mutableListOf<Vacancy>()
+        listData = mutableListOf()
     }
 
     fun currentVacancyInfo(url: String) : String{

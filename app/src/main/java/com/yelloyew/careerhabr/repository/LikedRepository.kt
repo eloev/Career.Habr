@@ -22,9 +22,9 @@ class LikedRepository private constructor(context: Context){
     private val likedDao = database.likedDao()
     private val executor = Executors.newSingleThreadExecutor()
 
-    fun getLiked() : LiveData<List<Vacancy>> = likedDao.getLiked()
+    fun getLiked() : LiveData<MutableList<Vacancy>> = likedDao.getLiked()
 
-    fun getLike(url: String) : LiveData<Vacancy?> = likedDao.getLike(url)
+    //fun getLike(url: String) : LiveData<Vacancy?> = likedDao.getLike(url)
 
     fun addLike(vacancy: Vacancy) {
         executor.execute{
@@ -43,11 +43,11 @@ class LikedRepository private constructor(context: Context){
         }
     }
 
-    fun updateLike(vacancy: Vacancy){
-        executor.execute{
-            likedDao.updateLike(vacancy)
-        }
-    }
+//    fun updateLike(vacancy: Vacancy){
+//        executor.execute{
+//            likedDao.updateLike(vacancy)
+//        }
+//    }
 
     companion object{
         private var INSTANCE: LikedRepository? = null

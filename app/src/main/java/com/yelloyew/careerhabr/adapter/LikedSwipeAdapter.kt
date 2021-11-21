@@ -5,22 +5,24 @@ import android.util.Log
 import android.widget.ImageView
 import androidx.core.view.isVisible
 import androidx.recyclerview.widget.ItemTouchHelper
+import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.ui.LikedFragment
 import java.lang.Exception
 import kotlin.math.absoluteValue
 
-class LikedSwipeAdapter(var adapter: LikedFragment.RecyclerAdapter) :
+
+class LikedSwipeAdapter(private var adapter: LikedFragment.RecyclerAdapter) :
     ItemTouchHelper.Callback() {
 
-    var lastAlpha = 0
+    private var lastAlpha = 0
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeFlag(ItemTouchHelper.ACTION_STATE_SWIPE, ItemTouchHelper.LEFT)
+        return makeFlag(ACTION_STATE_IDLE, LEFT) or makeFlag(ACTION_STATE_SWIPE, LEFT)
     }
 
     override fun onMove(
@@ -55,12 +57,12 @@ class LikedSwipeAdapter(var adapter: LikedFragment.RecyclerAdapter) :
 
             val likeImageView: ImageView = v!!.findViewById(R.id.like_imageview)
             likeImageView.setImageResource(R.drawable.ic_dislike)
-            val likeBackground: ImageView = v!!.findViewById(R.id.like_background_imageview)
+            val likeBackground: ImageView = v.findViewById(R.id.like_background_imageview)
 
             val alpha = (dX.absoluteValue / 10).toInt()
             Log.d("tag", alpha.toString())
 
-            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+            if (actionState == ACTION_STATE_SWIPE) {
                 if (alpha in 4..107) {
                     likeImageView.isVisible = true
                     likeBackground.isVisible = true

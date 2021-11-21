@@ -1,7 +1,6 @@
 package com.yelloyew.careerhabr.database
 
 import androidx.room.TypeConverter
-import java.util.stream.Collectors
 
 
 class LikedTypeConverters {

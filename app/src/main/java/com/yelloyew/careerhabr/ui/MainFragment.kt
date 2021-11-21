@@ -11,7 +11,6 @@ import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
-import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -122,8 +121,7 @@ class MainFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mainViewModel.getData().observe(
-            viewLifecycleOwner,
-            Observer {
+            viewLifecycleOwner, {
                 adapter.apply {
                     setData(it)
                 }
@@ -233,17 +231,21 @@ class MainFragment : Fragment() {
         _binding = null
     }
 
-    inner class MainRecyclerAdapter() :
-        RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
+    inner class MainRecyclerAdapter : RecyclerView.Adapter<MainRecyclerAdapter.ViewHolder>() {
         private var vacancies: MutableList<Vacancy> = mutableListOf()
         private var initUpdate = true
 
         fun setData(newVacancyList: MutableList<Vacancy>) {
             val diffUtil = VacancyDiffCallback(vacancies, newVacancyList)
             val diffResult = DiffUtil.calculateDiff(diffUtil)
-            vacancies = newVacancyList
+            if (newVacancyList.size == 0) {
+                binding.tvIfNull.isVisible = true
+            } else {
+                vacancies = newVacancyList
+                notifyDataSetChanged()
+                binding.tvIfNull.isVisible = false
+            }
             diffResult.dispatchUpdatesTo(this)
-            notifyDataSetChanged()
         }
 
         fun likeVacancy(position: Int) {
@@ -275,17 +277,10 @@ class MainFragment : Fragment() {
             }
         }
 
-        override fun getItemCount(): Int {
-            return if (vacancies.size != 0) {
-                binding.tvIfNull.isVisible = false
-                vacancies.size
-            } else {
-                binding.tvIfNull.isVisible = true
-                0
-            }
-        }
+        override fun getItemCount() = vacancies.size
 
-        inner class ViewHolder(val bindingItem: ItemVacancyBinding) :
+
+        inner class ViewHolder(private val bindingItem: ItemVacancyBinding) :
             RecyclerView.ViewHolder(bindingItem.root), View.OnClickListener {
 
             private lateinit var vacancy: Vacancy

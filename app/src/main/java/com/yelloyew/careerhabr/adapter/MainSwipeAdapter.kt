@@ -10,10 +10,10 @@ import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.ui.MainFragment
 import kotlin.math.absoluteValue
 
-class MainSwipeAdapter(var adapter: MainFragment.MainRecyclerAdapter) :
+class MainSwipeAdapter(private var adapter: MainFragment.MainRecyclerAdapter) :
     ItemTouchHelper.Callback() {
 
-    var lastAlpha = 0
+    private var lastAlpha = 0
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
@@ -48,29 +48,34 @@ class MainSwipeAdapter(var adapter: MainFragment.MainRecyclerAdapter) :
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
-        val position = viewHolder.adapterPosition
-        val v = recyclerView.layoutManager!!.findViewByPosition(position)
+        try {
+            val position = viewHolder.adapterPosition
+            val v = recyclerView.layoutManager!!.findViewByPosition(position)
 
-        val likeImageView: ImageView = v!!.findViewById(R.id.like_imageview)
-        val likeBackground: ImageView = v!!.findViewById(R.id.like_background_imageview)
+            val likeImageView: ImageView = v!!.findViewById(R.id.like_imageview)
+            val likeBackground: ImageView = v.findViewById(R.id.like_background_imageview)
 
-        val alpha = (dX.absoluteValue / 10).toInt()
-        Log.d("tag", alpha.toString())
+            val alpha = (dX.absoluteValue / 10).toInt()
+            Log.d("tag", alpha.toString())
 
-        if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
-            if (alpha in 4..107) {
-                likeImageView.isVisible = true
-                likeBackground.isVisible = true
-                if (alpha < 28) {
-                    likeImageView.imageAlpha = alpha * 9
-                    likeBackground.imageAlpha = alpha * 9
+            if (actionState == ItemTouchHelper.ACTION_STATE_SWIPE) {
+                if (alpha in 4..107) {
+                    likeImageView.isVisible = true
+                    likeBackground.isVisible = true
+                    if (alpha < 28) {
+                        likeImageView.imageAlpha = alpha * 9
+                        likeBackground.imageAlpha = alpha * 9
+                    }
+                    lastAlpha = alpha
                 }
-                lastAlpha = alpha
+                else {
+                    likeImageView.imageAlpha = 0
+                    likeBackground.imageAlpha = 0
+                }
             }
-            else {
-                likeImageView.imageAlpha = 0
-                likeBackground.imageAlpha = 0
-            }
+        }
+        catch (e: Exception){
+            Log.d("tagMainSwipe", e.toString())
         }
         super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
     }

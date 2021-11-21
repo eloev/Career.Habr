@@ -1,7 +1,6 @@
 package com.yelloyew.careerhabr.ui
 
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -19,7 +18,6 @@ import com.yelloyew.careerhabr.MainActivity
 import com.yelloyew.careerhabr.MainViewModel
 import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.adapter.LikedSwipeAdapter
-import com.yelloyew.careerhabr.adapter.MainSwipeAdapter
 import com.yelloyew.careerhabr.databinding.FragmentLikedBinding
 import com.yelloyew.careerhabr.databinding.ItemVacancyBinding
 import com.yelloyew.careerhabr.model.Vacancy
@@ -55,9 +53,7 @@ class LikedFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.likedListLiveData.observe(
-            viewLifecycleOwner,
-            Observer { adapter.setData(it)
-            Log.d("tag8", "$it")}
+            viewLifecycleOwner, { adapter.setData(it) }
         )
     }
 
@@ -109,16 +105,23 @@ class LikedFragment : Fragment() {
     }
 
     inner class RecyclerAdapter : RecyclerView.Adapter<ViewHolder>() {
-        private var vacancies: List<Vacancy> = listOf()
+        private var vacancies: MutableList<Vacancy> = mutableListOf()
 
-        fun setData(newVacancyList: List<Vacancy>) {
-            vacancies = newVacancyList
-            notifyItemRangeInserted(0, vacancies.size)
+        fun setData(newVacancyList: MutableList<Vacancy>) {
+            if (newVacancyList.size == 0){
+                binding.tvIfNull.isVisible = true
+            }
+            else {
+                vacancies = newVacancyList
+                notifyItemRangeInserted(0, vacancies.size)
+                binding.tvIfNull.isVisible = false
+            }
         }
 
         fun deleteVacancy(position: Int) {
             mainViewModel.deleteLike(vacancies[position])
-            notifyItemRemoved(position)
+            notifyItemRangeRemoved(0, vacancies.size)
+            vacancies.clear()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -136,14 +139,6 @@ class LikedFragment : Fragment() {
             holder.bind(vacancy)
         }
 
-        override fun getItemCount(): Int {
-            return if (vacancies.isNotEmpty()) {
-                binding.tvIfNull.isVisible = false
-                vacancies.size
-            } else {
-                binding.tvIfNull.isVisible = true
-                0
-            }
-        }
+        override fun getItemCount() = vacancies.size
     }
 }

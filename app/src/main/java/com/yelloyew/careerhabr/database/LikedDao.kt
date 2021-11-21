@@ -6,12 +6,11 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
 import com.yelloyew.careerhabr.model.Vacancy
-import java.util.*
 
 @Dao
 interface LikedDao {
     @Query("SELECT * FROM vacancy")
-    fun getLiked(): LiveData<List<Vacancy>>
+    fun getLiked(): LiveData<MutableList<Vacancy>>
     @Query("SELECT * FROM vacancy WHERE url=(:url)")
     fun getLike(url: String) : LiveData<Vacancy?>
     @Insert
