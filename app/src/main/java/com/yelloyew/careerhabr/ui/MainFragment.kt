@@ -27,7 +27,6 @@ import androidx.navigation.fragment.findNavController
 import com.yelloyew.careerhabr.adapter.MainSwipeAdapter
 import com.yelloyew.careerhabr.adapter.VacancyDiffCallback
 
-
 class MainFragment : Fragment() {
 
     private var _binding: FragmentMainBinding? = null
@@ -122,9 +121,8 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mainViewModel.getData().observe(
             viewLifecycleOwner, {
-                adapter.apply {
-                    setData(it)
-                }
+                binding.tvIfNull.isVisible = it.size == 0
+                adapter.setData(it)
                 binding.refresh.isRefreshing = false
             })
         super.onViewCreated(view, savedInstanceState)
@@ -238,13 +236,8 @@ class MainFragment : Fragment() {
         fun setData(newVacancyList: MutableList<Vacancy>) {
             val diffUtil = VacancyDiffCallback(vacancies, newVacancyList)
             val diffResult = DiffUtil.calculateDiff(diffUtil)
-            if (newVacancyList.size == 0) {
-                binding.tvIfNull.isVisible = true
-            } else {
-                vacancies = newVacancyList
-                notifyDataSetChanged()
-                binding.tvIfNull.isVisible = false
-            }
+            vacancies = newVacancyList
+            notifyDataSetChanged()
             diffResult.dispatchUpdatesTo(this)
         }
 
@@ -281,13 +274,9 @@ class MainFragment : Fragment() {
 
 
         inner class ViewHolder(private val bindingItem: ItemVacancyBinding) :
-            RecyclerView.ViewHolder(bindingItem.root), View.OnClickListener {
+            RecyclerView.ViewHolder(bindingItem.root) {
 
             private lateinit var vacancy: Vacancy
-
-            init {
-                itemView.setOnClickListener(this)
-            }
 
             fun bind(vacancy: Vacancy) {
                 this.vacancy = vacancy
@@ -314,11 +303,11 @@ class MainFragment : Fragment() {
                     .load(vacancy.logo)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(bindingItem.logo)
-            }
 
-            override fun onClick(v: View) {
-                val action = MainFragmentDirections.actionMainFragmentToVacancyFragment(vacancy)
-                findNavController().navigate(action)
+                itemView.setOnClickListener {
+                    val action = MainFragmentDirections.actionMainFragmentToVacancyFragment(vacancy)
+                    findNavController().navigate(action)
+                }
             }
         }
     }

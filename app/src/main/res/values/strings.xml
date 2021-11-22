@@ -21,4 +21,8 @@
     <string name="liked_null">Нет понравившихся вакансий :(</string>
     <string name="search_null">Поиск ничего не нашёл :(</string>
     <string name="like">Нравится</string>
+    <string name="notification_title">Уведомления</string>
+    <string name="notification_hint">Присылать уведомления о новых вакансиях?</string>
+    <string name="notification_no">Не уведомлять</string>
+    <string name="notification_yes">Уведомлять</string>
 </resources>

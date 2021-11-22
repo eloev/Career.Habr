@@ -32,9 +32,15 @@
     <fragment
         android:id="@+id/likedFragment"
         android:name="com.yelloyew.careerhabr.ui.LikedFragment"
-        android:label="LikedFragment" >
+        android:label="LikedFragment"
+        tools:layout="@layout/fragment_liked">
         <action
             android:id="@+id/action_likedFragment_to_vacancyFragment"
             app:destination="@id/vacancyFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/notificationFragment"
+        android:name="com.yelloyew.careerhabr.ui.NotificationFragment"
+        android:label="fragment_notification"
+        tools:layout="@layout/fragment_notification" />
 </navigation>

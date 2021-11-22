@@ -2,7 +2,6 @@ package com.yelloyew.careerhabr.ui
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -11,10 +10,8 @@ import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
 import com.yelloyew.careerhabr.MainViewModel
 import com.yelloyew.careerhabr.databinding.FragmentVacancyBinding
-import androidx.lifecycle.Observer
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.yelloyew.careerhabr.R
 
 class VacancyFragment : Fragment() {
 
@@ -34,7 +31,7 @@ class VacancyFragment : Fragment() {
 
         mainViewModel.getCurrentVacancyInfo(vacancy.url).observe(
             viewLifecycleOwner,
-            Observer {
+            {
                 binding.apply {
                     progressBar.isVisible = false
                     shareButton.isVisible = true

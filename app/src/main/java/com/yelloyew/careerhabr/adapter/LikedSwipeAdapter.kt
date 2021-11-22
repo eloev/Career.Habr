@@ -8,21 +8,16 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.ItemTouchHelper.*
 import androidx.recyclerview.widget.RecyclerView
 import com.yelloyew.careerhabr.R
-import com.yelloyew.careerhabr.ui.LikedFragment
 import java.lang.Exception
-import kotlin.math.absoluteValue
 
-
-class LikedSwipeAdapter(private var adapter: LikedFragment.RecyclerAdapter) :
+class LikedSwipeAdapter(private var adapter: LikedRecyclerAdapter) :
     ItemTouchHelper.Callback() {
-
-    private var lastAlpha = 0
 
     override fun getMovementFlags(
         recyclerView: RecyclerView,
         viewHolder: RecyclerView.ViewHolder
     ): Int {
-        return makeFlag(ACTION_STATE_IDLE, LEFT) or makeFlag(ACTION_STATE_SWIPE, LEFT)
+        return makeFlag(ACTION_STATE_SWIPE, LEFT)
     }
 
     override fun onMove(
@@ -51,36 +46,33 @@ class LikedSwipeAdapter(private var adapter: LikedFragment.RecyclerAdapter) :
         actionState: Int,
         isCurrentlyActive: Boolean
     ) {
+        var rdX = 0f
         try {
+            rdX = if (dX < -281f) {
+                -281f
+            } else {
+                dX
+            }
             val position = viewHolder.adapterPosition
             val v = recyclerView.layoutManager!!.findViewByPosition(position)
 
-            val likeImageView: ImageView = v!!.findViewById(R.id.like_imageview)
+            val likeBackground: ImageView = v!!.findViewById(R.id.like_background_imageview)
+            likeBackground.setImageResource(R.drawable.like_dis_background_drawable)
+            likeBackground.isVisible = true
+            val likeImageView: ImageView = v.findViewById(R.id.like_imageview)
             likeImageView.setImageResource(R.drawable.ic_dislike)
-            val likeBackground: ImageView = v.findViewById(R.id.like_background_imageview)
+            likeImageView.isVisible = true
 
-            val alpha = (dX.absoluteValue / 10).toInt()
-            Log.d("tag", alpha.toString())
-
-            if (actionState == ACTION_STATE_SWIPE) {
-                if (alpha in 4..107) {
-                    likeImageView.isVisible = true
-                    likeBackground.isVisible = true
-                    if (alpha < 28) {
-                        likeImageView.imageAlpha = alpha * 9
-                        likeBackground.imageAlpha = alpha * 9
-                    }
-                    lastAlpha = alpha
-                }
-                else {
-                    likeImageView.imageAlpha = 0
-                    likeBackground.imageAlpha = 0
-                }
+            if (rdX in -281f..-4f && isCurrentlyActive) {
+                likeBackground.alpha = rdX / -140f
+                likeImageView.alpha = rdX / -140f
+            } else {
+                likeBackground.alpha = 0f
+                likeImageView.alpha = 0f
             }
-        }
-        catch (e: Exception){
+        } catch (e: Exception) {
             Log.d("tagLikeSwipe", e.toString())
         }
-        super.onChildDraw(c, recyclerView, viewHolder, dX, dY, actionState, isCurrentlyActive)
+        super.onChildDraw(c, recyclerView, viewHolder, rdX, dY, actionState, isCurrentlyActive)
     }
 }

@@ -13,16 +13,22 @@
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_done.xml" value="0.3769230769230769" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_like.xml" value="0.23958333333333334" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_main_search.xml" value="0.23958333333333334" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_notification.xml" value="0.253125" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_null.xml" value="0.23958333333333334" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_search.xml" value="0.3769230769230769" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/ic_share.xml" value="0.2515625" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/like_background_drawable.xml" value="0.18854166666666666" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/like_dis_background_drawable.xml" value="0.18854166666666666" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/like_drawable.xml" value="0.16510416666666666" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/scrollbar.xml" value="0.22135416666666666" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/white_stroke.xml" value="0.3769230769230769" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/white_stroke_green.xml" value="0.22708333333333333" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/drawable/white_stroke_red.xml" value="0.22708333333333333" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/activity_main.xml" value="0.35260416666666666" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/fragment_liked.xml" value="0.24010416666666667" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/fragment_main.xml" value="0.4" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/fragment_main_search.xml" value="0.2296875" />
+        <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/fragment_notification.xml" value="0.23697916666666666" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/fragment_vacancy.xml" value="0.22447916666666667" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/item_vacancy.xml" value="0.3070652173913043" />
         <entry key="..\:/Users/Dmitry/AndroidStudioProjects/CareerHabr/app/src/main/res/layout/like_imageview.xml" value="0.19375" />

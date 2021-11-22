@@ -10,9 +10,9 @@ import com.yelloyew.careerhabr.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel() : ViewModel() {
+class MainViewModel : ViewModel() {
 
-    private val url = "https://career.habr.com/vacancies?type=all&per_page=15"
+    private val url = "https://career.habr.com/vacancies?type=all&sort=date&per_page=15"
     private val repository = Repository.get()
     private var vacancies: MutableLiveData<MutableList<Vacancy>> = MutableLiveData()
     private var vacancyInfo: MutableLiveData<String> = MutableLiveData()
@@ -54,7 +54,7 @@ class MainViewModel() : ViewModel() {
         likedRepository.addLike(vacancy)
     }
 
-    fun deleteLike(vacancy: Vacancy){
+    fun deleteLike(vacancy: Vacancy) {
         likedRepository.deleteLike(vacancy)
     }
 }
