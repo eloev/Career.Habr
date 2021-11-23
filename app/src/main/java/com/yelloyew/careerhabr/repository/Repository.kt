@@ -10,7 +10,6 @@ class Repository private constructor(context: Context) {
 
     private var listData = mutableListOf<Vacancy>()
     private var vacancyInfo = ""
-    private var oldUrl = ""
 
     fun getVacanciesList(url: String, page: Int) : MutableList<Vacancy> {
         try {
@@ -48,12 +47,6 @@ class Repository private constructor(context: Context) {
             }
         } catch (e: IOException) {
             e.printStackTrace()
-        }
-        if (url == oldUrl && listData.size > 15){
-            eraseList()
-            Log.d("tagR", "erase list called")
-        } else {
-            oldUrl = url
         }
         return listData
     }

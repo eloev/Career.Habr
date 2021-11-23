@@ -1,11 +1,10 @@
-package com.yelloyew.careerhabr
+package com.yelloyew.careerhabr.viewmodel
 
 import android.util.Log
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yelloyew.careerhabr.model.Vacancy
-import com.yelloyew.careerhabr.repository.LikedRepository
 import com.yelloyew.careerhabr.repository.Repository
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,9 +15,6 @@ class MainViewModel : ViewModel() {
     private val repository = Repository.get()
     private var vacancies: MutableLiveData<MutableList<Vacancy>> = MutableLiveData()
     private var vacancyInfo: MutableLiveData<String> = MutableLiveData()
-
-    private val likedRepository = LikedRepository.get()
-    val likedListLiveData = likedRepository.getLiked()
 
     private var response = ""
     private var newResponse = ""
@@ -48,13 +44,5 @@ class MainViewModel : ViewModel() {
             vacancyInfo.postValue(repository.currentVacancyInfo(currentVacancyUrl))
         }
         return vacancyInfo
-    }
-
-    fun addLike(vacancy: Vacancy) {
-        likedRepository.addLike(vacancy)
-    }
-
-    fun deleteLike(vacancy: Vacancy) {
-        likedRepository.deleteLike(vacancy)
     }
 }

@@ -7,10 +7,10 @@ import androidx.navigation.Navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
-import com.yelloyew.careerhabr.MainViewModel
 import com.yelloyew.careerhabr.databinding.ItemVacancyBinding
 import com.yelloyew.careerhabr.model.Vacancy
 import com.yelloyew.careerhabr.ui.LikedFragmentDirections
+import com.yelloyew.careerhabr.viewmodel.LikedViewModel
 
 class LikedRecyclerAdapter : RecyclerView.Adapter<LikedRecyclerAdapter.ViewHolder>() {
     private var vacancies: MutableList<Vacancy> = mutableListOf()
@@ -21,7 +21,7 @@ class LikedRecyclerAdapter : RecyclerView.Adapter<LikedRecyclerAdapter.ViewHolde
     }
 
     fun deleteVacancy(position: Int) {
-        MainViewModel().deleteLike(vacancies[position])
+        LikedViewModel().deleteLike(vacancies[position])
         notifyItemRangeRemoved(0, vacancies.size)
         vacancies.clear()
     }

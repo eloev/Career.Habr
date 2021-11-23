@@ -8,7 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.core.view.isVisible
 import androidx.fragment.app.viewModels
-import com.yelloyew.careerhabr.MainViewModel
+import com.yelloyew.careerhabr.viewmodel.MainViewModel
 import com.yelloyew.careerhabr.databinding.FragmentVacancyBinding
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions

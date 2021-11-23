@@ -2,7 +2,10 @@ package com.yelloyew.careerhabr.ui
 
 import android.app.Activity
 import android.content.Context
+import android.os.Build
 import android.os.Bundle
+import android.os.VibrationEffect
+import android.os.Vibrator
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -18,12 +21,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yelloyew.careerhabr.MainActivity
-import com.yelloyew.careerhabr.MainViewModel
+import com.yelloyew.careerhabr.viewmodel.MainViewModel
 import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.databinding.FragmentMainBinding
 import com.yelloyew.careerhabr.databinding.ItemVacancyBinding
 import com.yelloyew.careerhabr.model.Vacancy
 import androidx.navigation.fragment.findNavController
+import com.yelloyew.careerhabr.viewmodel.LikedViewModel
 import com.yelloyew.careerhabr.adapter.MainSwipeAdapter
 import com.yelloyew.careerhabr.adapter.VacancyDiffCallback
 
@@ -38,83 +42,27 @@ class MainFragment : Fragment() {
 
     private lateinit var searchItem: MenuItem
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        setHasOptionsMenu(true)
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
-        (requireActivity() as MainActivity).title = getString(R.string.app_name)
-
         binding.apply {
             recyclerView.layoutManager = LinearLayoutManager(context)
             recyclerView.adapter = adapter
-
             refresh.isRefreshing = true
-
             refresh.setOnRefreshListener {
                 refresh.isRefreshing = false
             }
         }
 
+        setHasOptionsMenu(true)
+        (requireActivity() as MainActivity).title = getString(R.string.app_name)
+
         val itemTouchHelper = ItemTouchHelper(MainSwipeAdapter(adapter))
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
-        //search view remote button
-        binding.remoteTextview.setOnClickListener {
-            if (mainViewModel.remote == "") {
-                binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
-                    getDrawable(
-                        requireContext(),
-                        R.drawable.ic_done
-                    ), null, null, null
-                )
-                mainViewModel.remote = "true"
-            } else if (mainViewModel.remote == "true") {
-                binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
-                    getDrawable(
-                        requireContext(),
-                        R.drawable.ic_close
-                    ), null, null, null
-                )
-                mainViewModel.remote = ""
-            }
-            mainViewModel.getData()
-            binding.refresh.isRefreshing = true
-        }
-
-        //search view spinner
-        val items = resources.getStringArray(R.array.skills)
-        val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
-        (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
-        binding.menuSkillTextview.setOnItemClickListener { _, _, i, _ ->
-            when (i) {
-                0 -> {
-                    mainViewModel.qid = ""
-                }
-                1 -> {
-                    mainViewModel.qid = "1"
-                }
-                2 -> {
-                    mainViewModel.qid = "3"
-                }
-                3 -> {
-                    mainViewModel.qid = "4"
-                }
-                4 -> {
-                    mainViewModel.qid = "5"
-                }
-                5 -> {
-                    mainViewModel.qid = "6"
-                }
-            }
-            mainViewModel.getData()
-        }
         return binding.root
     }
 
@@ -142,66 +90,110 @@ class MainFragment : Fragment() {
                 } else {
                     // поиск открыт
                     searchItem.setIcon(R.drawable.ic_close)
+                    hideBottomNav(true)
                     binding.apply {
                         searchLayout.isVisible = true
                         searchBackground.isVisible = true
-                        hideBottomNav(true)
-
                         // фон поиска
                         searchBackgroundClick.setOnClickListener {
-                            mainViewModel.query = searchText.text.toString()
                             closeSearch()
                         }
-
-                        // нажатие enter в поиске
-                        binding.searchText.setOnKeyListener(object : View.OnKeyListener {
-                            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                                if (event.action == KeyEvent.ACTION_DOWN &&
-                                    keyCode == KeyEvent.KEYCODE_ENTER
-                                ) {
-                                    closeSearch()
-                                    binding.apply {
-                                        searchText.isCursorVisible = false
-                                        refresh.isRefreshing = true
-                                    }
-                                    mainViewModel.apply {
-                                        query = binding.searchText.text.toString()
-                                        getData()
-                                    }
-                                    return true
-                                }
-                                return false
-                            }
-                        })
-
-                        // нажатие enter в цене
-                        binding.salaryText.setOnKeyListener(object : View.OnKeyListener {
-                            override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
-                                // if the event is a key down event on the enter button
-                                if (event.action == KeyEvent.ACTION_DOWN &&
-                                    keyCode == KeyEvent.KEYCODE_ENTER
-                                ) {
-                                    closeSearch()
-                                    binding.apply {
-                                        salaryText.isCursorVisible = false
-                                        refresh.isRefreshing = true
-                                    }
-
-                                    mainViewModel.apply {
-                                        salary = binding.salaryText.text.toString()
-                                        getData()
-                                    }
-                                    return true
-                                }
-                                return false
-                            }
-                        })
                     }
+
+                    //можно удалённо кнопка
+                    binding.remoteTextview.setOnClickListener {
+                        if (mainViewModel.remote == "") {
+                            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                                getDrawable(
+                                    requireContext(),
+                                    R.drawable.ic_done
+                                ), null, null, null
+                            )
+                            mainViewModel.remote = "true"
+                        } else if (mainViewModel.remote == "true") {
+                            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                                getDrawable(
+                                    requireContext(),
+                                    R.drawable.ic_close
+                                ), null, null, null
+                            )
+                            mainViewModel.remote = ""
+                        }
+                        mainViewModel.getData()
+                        binding.refresh.isRefreshing = true
+                    }
+
+                    //спиннер квалификации
+                    val items = resources.getStringArray(R.array.skills)
+                    val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
+                    (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
+                    binding.menuSkillTextview.setOnItemClickListener { _, _, i, _ ->
+                        when (i) {
+                            0 -> {
+                                mainViewModel.qid = ""
+                            }
+                            1 -> {
+                                mainViewModel.qid = "1"
+                            }
+                            2 -> {
+                                mainViewModel.qid = "3"
+                            }
+                            3 -> {
+                                mainViewModel.qid = "4"
+                            }
+                            4 -> {
+                                mainViewModel.qid = "5"
+                            }
+                            5 -> {
+                                mainViewModel.qid = "6"
+                            }
+                        }
+                        mainViewModel.getData()
+                        binding.refresh.isRefreshing = true
+                    }
+
+                    // нажатие enter в поиске
+                    binding.searchText.setOnKeyListener(object : View.OnKeyListener {
+                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                                closeSearchAndSearch()
+                                return true
+                            }
+                            return false
+                        }
+                    })
+
+                    // нажатие enter в цене
+                    binding.salaryText.setOnKeyListener(object : View.OnKeyListener {
+                        override fun onKey(v: View?, keyCode: Int, event: KeyEvent): Boolean {
+                            if (event.action == KeyEvent.ACTION_DOWN && keyCode == KeyEvent.KEYCODE_ENTER) {
+                                closeSearchAndSearch()
+                                return true
+                            }
+                            return false
+                        }
+                    })
+
                 }
+                //search end
                 true
             }
             else -> super.onOptionsItemSelected(item)
         }
+    }
+
+    private fun closeSearchAndSearch() {
+        binding.apply {
+            searchText.isCursorVisible = false
+            salaryText.isCursorVisible = false
+            refresh.isRefreshing = true
+        }
+        mainViewModel.apply {
+            query = binding.searchText.text.toString()
+            salary = binding.salaryText.text.toString()
+            getData()
+        }
+        closeSearch()
     }
 
     private fun closeSearch() {
@@ -209,9 +201,14 @@ class MainFragment : Fragment() {
             searchLayout.isVisible = false
             searchBackground.isVisible = false
         }
-        searchItem.setIcon(R.drawable.ic_search)
-        view?.let { activity?.hideKeyboard(it) }
         hideBottomNav(false)
+        searchItem.setIcon(R.drawable.ic_search)
+
+        view?.let { activity?.hideKeyboard(it) }
+    }
+
+    private fun hideBottomNav(hide: Boolean) {
+        (activity as MainActivity).hideBottomNav(hide)
     }
 
     private fun Context.hideKeyboard(view: View) {
@@ -220,8 +217,16 @@ class MainFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun hideBottomNav(hide: Boolean) {
-        (activity as MainActivity).hideBottomNav(hide)
+    private fun Context.vibrate(){
+        val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
+        if (vibrator.hasVibrator()){
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+            } else {
+                //deprecated in API 26
+                vibrator.vibrate(100)
+            }
+        }
     }
 
     override fun onDestroy() {
@@ -242,8 +247,9 @@ class MainFragment : Fragment() {
         }
 
         fun likeVacancy(position: Int) {
-            mainViewModel.addLike(vacancies[position])
+            LikedViewModel().addLike(vacancies[position])
             notifyItemChanged(position)
+            context!!.vibrate()
         }
 
         override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
