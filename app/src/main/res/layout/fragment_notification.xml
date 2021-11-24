@@ -117,7 +117,7 @@
         app:layout_constraintTop_toBottomOf="@id/salary_input">
 
         <AutoCompleteTextView
-            android:id="@+id/menu_skill_textview"
+            android:id="@+id/menu_skill_edittext"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:focusable="false"
@@ -136,7 +136,7 @@
         android:gravity="center"
         android:paddingStart="20dp"
         android:paddingEnd="20dp"
-        android:text="@string/notification_yes"
+        android:text="@string/notification_no"
         android:textColor="@color/white"
         app:drawableLeftCompat="@drawable/ic_close"
         app:layout_constraintEnd_toEndOf="@id/marginEnd"

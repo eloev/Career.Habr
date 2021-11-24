@@ -16,20 +16,14 @@ class MainViewModel : ViewModel() {
     private var vacancies: MutableLiveData<MutableList<Vacancy>> = MutableLiveData()
     private var vacancyInfo: MutableLiveData<String> = MutableLiveData()
 
-    private var response = ""
     private var newResponse = ""
 
     var page: Int = 1
-    var query = "kotlin"
-    var remote = ""
-    var salary = ""
-    var qid = ""
 
-    fun getData(): MutableLiveData<MutableList<Vacancy>> {
+    fun getData(response: String): MutableLiveData<MutableList<Vacancy>> {
         viewModelScope.launch(Dispatchers.IO) {
-            response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
             if (response != newResponse) {
-                repository.eraseList()
+                eraseList()
                 page = 1
                 newResponse = response
             }
@@ -37,6 +31,10 @@ class MainViewModel : ViewModel() {
             Log.d("tag3", "$url$response&page=$page")
         }
         return vacancies
+    }
+
+    fun eraseList(){
+        repository.eraseList()
     }
 
     fun getCurrentVacancyInfo(currentVacancyUrl: String): MutableLiveData<String> {

@@ -37,10 +37,20 @@ class MainFragment : Fragment() {
     private val binding get() = _binding!!
 
     private var adapter = MainRecyclerAdapter()
-
     private val mainViewModel: MainViewModel by viewModels()
 
     private lateinit var searchItem: MenuItem
+
+    private var query = "kotlin"
+    private var remote = ""
+    private var salary = ""
+    private var qid = ""
+    private var response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        mainViewModel.eraseList()
+    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -67,7 +77,7 @@ class MainFragment : Fragment() {
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainViewModel.getData().observe(
+        mainViewModel.getData(response).observe(
             viewLifecycleOwner, {
                 binding.tvIfNull.isVisible = it.size == 0
                 adapter.setData(it)
@@ -102,55 +112,62 @@ class MainFragment : Fragment() {
 
                     //можно удалённо кнопка
                     binding.remoteTextview.setOnClickListener {
-                        if (mainViewModel.remote == "") {
+                        if (remote == "") {
                             binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
                                 getDrawable(
                                     requireContext(),
                                     R.drawable.ic_done
                                 ), null, null, null
                             )
-                            mainViewModel.remote = "true"
-                        } else if (mainViewModel.remote == "true") {
+                            remote = "true"
+                        } else if (remote == "true") {
                             binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
                                 getDrawable(
                                     requireContext(),
                                     R.drawable.ic_close
                                 ), null, null, null
                             )
-                            mainViewModel.remote = ""
+                            remote = ""
                         }
-                        mainViewModel.getData()
+                        sendResponse()
                         binding.refresh.isRefreshing = true
                     }
 
                     //спиннер квалификации
                     val items = resources.getStringArray(R.array.skills)
                     val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
-                    (binding.menuSkillTextview as? AutoCompleteTextView)?.setAdapter(adapter)
-                    binding.menuSkillTextview.setOnItemClickListener { _, _, i, _ ->
+                    (binding.menuSkillEdittext as? AutoCompleteTextView)?.setAdapter(adapter)
+                    binding.menuSkillEdittext.setOnItemClickListener { _, _, i, _ ->
                         when (i) {
                             0 -> {
-                                mainViewModel.qid = ""
+                                qid = ""
                             }
                             1 -> {
-                                mainViewModel.qid = "1"
+                                qid = "1"
                             }
                             2 -> {
-                                mainViewModel.qid = "3"
+                                qid = "3"
                             }
                             3 -> {
-                                mainViewModel.qid = "4"
+                                qid = "4"
                             }
                             4 -> {
-                                mainViewModel.qid = "5"
+                                qid = "5"
                             }
                             5 -> {
-                                mainViewModel.qid = "6"
+                                qid = "6"
                             }
                         }
-                        mainViewModel.getData()
+                        sendResponse()
                         binding.refresh.isRefreshing = true
                     }
+                    // Выводим выпадающий список
+                    binding.menuSkillEdittext.onFocusChangeListener =
+                        View.OnFocusChangeListener { _, hasFocus ->
+                            if (hasFocus) {
+                                binding.menuSkillEdittext.showDropDown()
+                            }
+                        }
 
                     // нажатие enter в поиске
                     binding.searchText.setOnKeyListener(object : View.OnKeyListener {
@@ -188,12 +205,15 @@ class MainFragment : Fragment() {
             salaryText.isCursorVisible = false
             refresh.isRefreshing = true
         }
-        mainViewModel.apply {
-            query = binding.searchText.text.toString()
-            salary = binding.salaryText.text.toString()
-            getData()
-        }
+        query = binding.searchText.text.toString()
+        salary = binding.salaryText.text.toString()
+        sendResponse()
         closeSearch()
+    }
+
+    private fun sendResponse(){
+        response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
+        mainViewModel.getData(response)
     }
 
     private fun closeSearch() {
@@ -217,11 +237,16 @@ class MainFragment : Fragment() {
         inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
     }
 
-    private fun Context.vibrate(){
+    private fun Context.vibrate() {
         val vibrator = getSystemService(Context.VIBRATOR_SERVICE) as Vibrator
-        if (vibrator.hasVibrator()){
+        if (vibrator.hasVibrator()) {
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE))
+                vibrator.vibrate(
+                    VibrationEffect.createOneShot(
+                        100,
+                        VibrationEffect.DEFAULT_AMPLITUDE
+                    )
+                )
             } else {
                 //deprecated in API 26
                 vibrator.vibrate(100)
@@ -267,10 +292,8 @@ class MainFragment : Fragment() {
             val vacancy = vacancies[position]
             holder.bind(vacancy)
             if (vacancies.size - position == 4 && initUpdate) {
-                mainViewModel.apply {
-                    page += 1
-                    getData()
-                }
+                mainViewModel.page += 1
+                sendResponse()
                 binding.refresh.isRefreshing = true
                 initUpdate = false
             }
