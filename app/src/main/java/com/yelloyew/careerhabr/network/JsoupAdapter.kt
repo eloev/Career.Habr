@@ -1,19 +1,20 @@
-package com.yelloyew.careerhabr.repository
+package com.yelloyew.careerhabr.network
 
 import android.content.Context
-import android.util.Log
 import com.yelloyew.careerhabr.model.Vacancy
 import org.jsoup.Jsoup
 import java.io.IOException
 
-class Repository private constructor(context: Context) {
+private const val URL = "https://career.habr.com/vacancies?type=all&sort=date&per_page=15"
+
+class JsoupAdapter private constructor(context: Context) {
 
     private var listData = mutableListOf<Vacancy>()
     private var vacancyInfo = ""
 
-    fun getVacanciesList(url: String, page: Int) : MutableList<Vacancy> {
+    fun getVacancies(response: String, page: Int) : MutableList<Vacancy> {
         try {
-            val doc = Jsoup.connect(url).get()
+            val doc = Jsoup.connect(URL + response).get()
             val vacancies = doc.select("div.vacancy-card")
 
             for ((i, vacancy) in vacancies.withIndex()) {
@@ -55,7 +56,7 @@ class Repository private constructor(context: Context) {
         listData = mutableListOf()
     }
 
-    fun currentVacancyInfo(url: String) : String{
+    fun getCurrentVacancyInfo(url: String) : String{
         try {
             val doc = Jsoup.connect(url).get()
             val string= doc.select("div.style-ugc").text()
@@ -78,17 +79,17 @@ class Repository private constructor(context: Context) {
     }
 
     companion object{
-        private var INSTANCE: Repository? = null
+        private var INSTANCE: JsoupAdapter? = null
 
         fun initialize(context: Context){
             if (INSTANCE == null){
-                INSTANCE = Repository(context)
+                INSTANCE = JsoupAdapter(context)
             }
         }
 
-        fun get(): Repository{
+        fun get(): JsoupAdapter{
             return INSTANCE ?:
-            throw IllegalStateException("Repository must be initialized")
+            throw IllegalStateException("JsoupAdapter must be initialized")
         }
     }
 }

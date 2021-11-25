@@ -19,7 +19,7 @@
     <string name="about_vacancy">Подробнее о вакансии:</string>
     <string name="liked_vacancy_title">Понравившиеся</string>
     <string name="liked_null">Нет понравившихся вакансий :(</string>
-    <string name="search_null">Поиск ничего не нашёл :(</string>
+    <string name="search_null">Поиск ничего не нашёл :( \n Или нет интернета</string>
     <string name="like">Нравится</string>
     <string name="notification_title">Уведомления</string>
     <string name="notification_hint">Присылать уведомления о новых вакансиях?</string>

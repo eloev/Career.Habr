@@ -5,41 +5,40 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.yelloyew.careerhabr.model.Vacancy
-import com.yelloyew.careerhabr.repository.Repository
+import com.yelloyew.careerhabr.network.JsoupAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
 class MainViewModel : ViewModel() {
 
-    private val url = "https://career.habr.com/vacancies?type=all&sort=date&per_page=15"
-    private val repository = Repository.get()
+    private val jsoupAdapter = JsoupAdapter.get()
     private var vacancies: MutableLiveData<MutableList<Vacancy>> = MutableLiveData()
     private var vacancyInfo: MutableLiveData<String> = MutableLiveData()
 
-    private var newResponse = ""
+    private var newRequest = ""
 
     var page: Int = 1
 
-    fun getData(response: String): MutableLiveData<MutableList<Vacancy>> {
+    fun getData(request: String): MutableLiveData<MutableList<Vacancy>> {
         viewModelScope.launch(Dispatchers.IO) {
-            if (response != newResponse) {
-                eraseList()
+            if (request != newRequest) {
+                jsoupAdapter.eraseList()
                 page = 1
-                newResponse = response
+                newRequest = request
             }
-            vacancies.postValue(repository.getVacanciesList(("$url$response&page=$page"), page))
-            Log.d("tag3", "$url$response&page=$page")
+            vacancies.postValue(jsoupAdapter.getVacancies(("$request&page=$page"), page))
+            Log.d("tag3", "$request&page=$page")
         }
         return vacancies
     }
 
     fun eraseList(){
-        repository.eraseList()
+        jsoupAdapter.eraseList()
     }
 
     fun getCurrentVacancyInfo(currentVacancyUrl: String): MutableLiveData<String> {
         viewModelScope.launch(Dispatchers.IO) {
-            vacancyInfo.postValue(repository.currentVacancyInfo(currentVacancyUrl))
+            vacancyInfo.postValue(jsoupAdapter.getCurrentVacancyInfo(currentVacancyUrl))
         }
         return vacancyInfo
     }

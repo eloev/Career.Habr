@@ -1,4 +1,4 @@
-package com.yelloyew.careerhabr.repository
+package com.yelloyew.careerhabr.database
 
 import android.content.Context
 import android.util.Log

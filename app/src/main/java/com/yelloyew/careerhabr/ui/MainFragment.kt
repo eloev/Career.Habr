@@ -6,6 +6,8 @@ import android.os.Build
 import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
+import android.text.Editable
+import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -14,11 +16,11 @@ import androidx.core.content.ContextCompat.getDrawable
 import androidx.core.view.isVisible
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.drawable.DrawableTransitionOptions
 import com.yelloyew.careerhabr.MainActivity
 import com.yelloyew.careerhabr.viewmodel.MainViewModel
@@ -30,6 +32,8 @@ import androidx.navigation.fragment.findNavController
 import com.yelloyew.careerhabr.viewmodel.LikedViewModel
 import com.yelloyew.careerhabr.adapter.MainSwipeAdapter
 import com.yelloyew.careerhabr.adapter.VacancyDiffCallback
+import com.yelloyew.careerhabr.utils.GlideApp
+import com.yelloyew.careerhabr.utils.RequestPreferences
 
 class MainFragment : Fragment() {
 
@@ -41,11 +45,10 @@ class MainFragment : Fragment() {
 
     private lateinit var searchItem: MenuItem
 
-    private var query = "kotlin"
+    private var query = ""
     private var remote = ""
     private var salary = ""
     private var qid = ""
-    private var response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -66,24 +69,33 @@ class MainFragment : Fragment() {
                 refresh.isRefreshing = false
             }
         }
-
         setHasOptionsMenu(true)
         (requireActivity() as MainActivity).title = getString(R.string.app_name)
 
         val itemTouchHelper = ItemTouchHelper(MainSwipeAdapter(adapter))
         itemTouchHelper.attachToRecyclerView(binding.recyclerView)
 
+        val sharedRequest =
+            RequestPreferences.getStoredRequest(requireContext()).split(",").toTypedArray()
+        if (sharedRequest.size == 3) {
+            query = sharedRequest[0]
+            if (sharedRequest[1].isNotBlank()) remoteButtonClick()
+            salary = sharedRequest[2]
+            binding.salaryText.text = Editable.Factory.getInstance().newEditable(salary)
+            binding.searchText.text = Editable.Factory.getInstance().newEditable(query)
+            Log.d("tag2", "oncreate")
+        }
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        mainViewModel.getData(response).observe(
-            viewLifecycleOwner, {
+        super.onViewCreated(view, savedInstanceState)
+        mainViewModel.getData("&q=$query&remote=$remote&salary=$salary&qid=$qid").observe(
+            viewLifecycleOwner, Observer {
                 binding.tvIfNull.isVisible = it.size == 0
                 adapter.setData(it)
                 binding.refresh.isRefreshing = false
             })
-        super.onViewCreated(view, savedInstanceState)
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
@@ -112,25 +124,8 @@ class MainFragment : Fragment() {
 
                     //можно удалённо кнопка
                     binding.remoteTextview.setOnClickListener {
-                        if (remote == "") {
-                            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
-                                getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_done
-                                ), null, null, null
-                            )
-                            remote = "true"
-                        } else if (remote == "true") {
-                            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
-                                getDrawable(
-                                    requireContext(),
-                                    R.drawable.ic_close
-                                ), null, null, null
-                            )
-                            remote = ""
-                        }
-                        sendResponse()
-                        binding.refresh.isRefreshing = true
+                        remoteButtonClick()
+                        sendRequest()
                     }
 
                     //спиннер квалификации
@@ -158,8 +153,7 @@ class MainFragment : Fragment() {
                                 qid = "6"
                             }
                         }
-                        sendResponse()
-                        binding.refresh.isRefreshing = true
+                        sendRequest()
                     }
                     // Выводим выпадающий список
                     binding.menuSkillEdittext.onFocusChangeListener =
@@ -199,6 +193,32 @@ class MainFragment : Fragment() {
         }
     }
 
+    private fun sendRequest() {
+        mainViewModel.getData("&q=$query&remote=$remote&salary=$salary&qid=$qid")
+        RequestPreferences.setStoredRequest(requireContext(), "$query,$remote,$salary")
+        binding.refresh.isRefreshing = true
+    }
+
+    private fun remoteButtonClick() {
+        if (remote == "") {
+            remote = "true"
+            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                getDrawable(
+                    requireContext(),
+                    R.drawable.ic_done
+                ), null, null, null
+            )
+        } else if (remote == "true") {
+            remote = ""
+            binding.remoteTextview.setCompoundDrawablesWithIntrinsicBounds(
+                getDrawable(
+                    requireContext(),
+                    R.drawable.ic_close
+                ), null, null, null
+            )
+        }
+    }
+
     private fun closeSearchAndSearch() {
         binding.apply {
             searchText.isCursorVisible = false
@@ -207,13 +227,8 @@ class MainFragment : Fragment() {
         }
         query = binding.searchText.text.toString()
         salary = binding.salaryText.text.toString()
-        sendResponse()
+        sendRequest()
         closeSearch()
-    }
-
-    private fun sendResponse(){
-        response = "&q=$query&remote=$remote&salary=$salary&qid=$qid"
-        mainViewModel.getData(response)
     }
 
     private fun closeSearch() {
@@ -293,8 +308,7 @@ class MainFragment : Fragment() {
             holder.bind(vacancy)
             if (vacancies.size - position == 4 && initUpdate) {
                 mainViewModel.page += 1
-                sendResponse()
-                binding.refresh.isRefreshing = true
+                sendRequest()
                 initUpdate = false
             }
         }
@@ -328,7 +342,7 @@ class MainFragment : Fragment() {
                         metaInfo3.isVisible = true
                     }
                 }
-                Glide.with(context!!)
+                GlideApp.with(context!!)
                     .load(vacancy.logo)
                     .transition(DrawableTransitionOptions.withCrossFade())
                     .into(bindingItem.logo)

@@ -2,7 +2,7 @@ package com.yelloyew.careerhabr.viewmodel
 
 import androidx.lifecycle.ViewModel
 import com.yelloyew.careerhabr.model.Vacancy
-import com.yelloyew.careerhabr.repository.LikedRepository
+import com.yelloyew.careerhabr.database.LikedRepository
 
 class LikedViewModel: ViewModel() {
 
