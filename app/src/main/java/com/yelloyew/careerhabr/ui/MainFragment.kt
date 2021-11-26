@@ -53,8 +53,10 @@ class MainFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        mainViewModel.eraseList()
-        mainViewModel.page = 1
+        mainViewModel.apply {
+            eraseList()
+            mainViewModel.page = 1
+        }
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
         binding.apply {
