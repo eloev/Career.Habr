@@ -161,7 +161,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:indeterminateTint="?attr/colorPrimary"
-                    app:layout_constraintBottom_toTopOf="@id/like_button"
+                    app:layout_constraintBottom_toTopOf="@id/share_button"
                     app:layout_constraintEnd_toEndOf="@id/marginEnd"
                     app:layout_constraintStart_toStartOf="@id/marginStart"
                     app:layout_constraintTop_toBottomOf="@id/about_vacancy" />
@@ -173,37 +173,22 @@
                     android:textSize="15sp"
                     android:layout_marginStart="8dp"
                     android:layout_marginEnd="8dp"
-                    app:layout_constraintBottom_toTopOf="@id/like_button"
+                    app:layout_constraintBottom_toTopOf="@id/share_button"
                     app:layout_constraintEnd_toEndOf="@id/marginEnd"
                     app:layout_constraintStart_toStartOf="@id/marginStart"
                     app:layout_constraintTop_toBottomOf="@id/about_vacancy"
                     tools:text="Проект: Развитие и поддержка сайта крупной ритейл сети электроники. Технологический стек: Kotlin, Java 11; Spring framework, Spring Boot 2, Spring Data, Spring Cloud, Spring batch; git, gitlab, maven, teamcity; hibernate, mysql; elasticsearch 6; hazelcast; mesos/marathon; rabbitmq; docker; groovy/spock Требования: Желание начать разрабатывать на Kotlin Знание реактивного программирования (reactor/webflux) Опыт работы с очередями : Rabbit MQ/Kafka Опыт с NoSQL БД Web services - REST, SOAP (jakson) опыт работы с GIT Сборщик Maven Опыт работы с Elasticsearch (настройка и использование). Понимание принципов микросервисной архитектуры Опыт работы Java программистом Знание Spring boot Опыт с Java 8 или выше Уверенное знание и понимание принципов ООП Знание основных шаблонов проектирования, основных структур данных (стеки, очереди и т. п.) Понимание принципов разработки и проектирования информационных систем (отказоустойчивость, кэширование, масштабирование и т. п.) Будет плюсом: Наличие Oracle JavaПроект: Развитие и поддержка сайта крупной ритейл сети электроники. Технологический стек: Kotlin, Java 11; Spring framework, Spring Boot 2, Spring Data, Spring Cloud, Spring batch; git, gitlab, maven, teamcity; hibernate, mysql; elasticsearch 6; hazelcast; mesos/marathon; rabbitmq; docker; groovy/spock Требования: Желание начать разрабатывать на Kotlin Знание реактивного программирования (reactor/webflux) Опыт работы с очередями : Rabbit MQ/Kafka Опыт с NoSQL БД Web services - REST, SOAP (jakson) опыт работы с GIT Сборщик Maven Опыт работы с Elasticsearch (настройка и использование). Понимание принципов микросервисной архитектуры Опыт работы Java программистом Знание Spring boot Опыт с Java 8 или выше Уверенное знание и понимание принципов ООП Знание основных шаблонов проектирования, основных структур данных (стеки, очереди и т. п.) Понимание принципов разработки и проектирования информационных систем (отказоустойчивость, кэширование, масштабирование и т. п.) Будет плюсом: Наличие Oracle Java" />
 
-
-                <Button
-                    android:id="@+id/like_button"
-                    android:layout_width="0dp"
-                    android:layout_height="wrap_content"
-                    android:layout_marginEnd="4dp"
-                    android:text="@string/like"
-                    android:textAllCaps="false"
-                    app:drawableLeftCompat="@drawable/ic_like"
-                    app:layout_constraintEnd_toStartOf="@id/share_button"
-                    app:layout_constraintStart_toStartOf="@id/marginStart"
-                    app:layout_constraintTop_toBottomOf="@id/vacancyInfo"
-                    app:layout_constraintBottom_toBottomOf="parent"/>
-
                 <Button
                     android:id="@+id/share_button"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="4dp"
                     android:text="@string/share_vacancy"
                     android:textAllCaps="false"
                     app:drawableLeftCompat="@drawable/ic_share"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toEndOf="@id/marginEnd"
-                    app:layout_constraintStart_toEndOf="@id/like_button"
+                    app:layout_constraintStart_toStartOf="@id/marginStart"
                     app:layout_constraintTop_toBottomOf="@id/vacancyInfo" />
             </androidx.constraintlayout.widget.ConstraintLayout>
         </ScrollView>

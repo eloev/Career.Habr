@@ -25,4 +25,11 @@
     <string name="notification_hint">Присылать уведомления о новых вакансиях?</string>
     <string name="notification_no">Не уведомляю</string>
     <string name="notification_yes">Уведомляю</string>
+    <string name="notify_channel_name">Новые вакансии</string>
+    <string name="notify_title">Хабр Карьера</string>
+    <string name="notify_vacancy">Найдена новая вакансия</string>
+    <string name="notify_vacancies_start">Найдено</string>
+    <string name="notify_vacancies_2_4">новые вакансии</string>
+    <string name="notify_vacancies_5_10">новых вакансий</string>
+    <string name="notify_vacancies_more">Найдено много новых вакансий</string>
 </resources>

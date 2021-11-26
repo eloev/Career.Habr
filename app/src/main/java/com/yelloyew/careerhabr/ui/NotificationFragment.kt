@@ -1,6 +1,5 @@
 package com.yelloyew.careerhabr.ui
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.util.Log
@@ -18,6 +17,9 @@ import com.yelloyew.careerhabr.R
 import com.yelloyew.careerhabr.databinding.FragmentNotificationBinding
 import com.yelloyew.careerhabr.utils.PollWorker
 import com.yelloyew.careerhabr.utils.RequestPreferences
+import java.util.concurrent.TimeUnit
+
+private const val NOTIFY_WORK = "NOTIFY_WORK"
 
 class NotificationFragment : Fragment() {
 
@@ -38,7 +40,6 @@ class NotificationFragment : Fragment() {
         _binding = FragmentNotificationBinding.inflate(inflater, container, false)
         (requireActivity() as MainActivity).title = getString(R.string.notification_title)
 
-
         val notifyRequest =
             RequestPreferences.getNotifyRequest(requireContext()).split(",").toTypedArray()
         if (notifyRequest.size == 4) {
@@ -47,22 +48,13 @@ class NotificationFragment : Fragment() {
             if (notifyRequest[1].isNotBlank()) remoteButton()
             salary = notifyRequest[2]
             skill = notifyRequest[3]
-            if (query.isNotBlank()) binding.salaryText.text =
-                Editable.Factory.getInstance().newEditable(salary)
-            if (salary.isNotBlank()) binding.searchText.text =
+            if (query.isNotBlank()) binding.searchText.text =
                 Editable.Factory.getInstance().newEditable(query)
+            if (salary.isNotBlank()) binding.salaryText.text =
+                Editable.Factory.getInstance().newEditable(salary)
         }
 
-        val constraints = Constraints.Builder()
-            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
-            .build()
-        val workRequest = OneTimeWorkRequest
-            .Builder(PollWorker::class.java)
-            .setConstraints(constraints)
-            .build()
-        WorkManager.getInstance(context!!)
-            .enqueue(workRequest)
-
+        if (RequestPreferences.getNotifyState(requireContext())) notifyButton()
 
         return binding.root
     }
@@ -79,20 +71,20 @@ class NotificationFragment : Fragment() {
         //спиннер квалификации
         val items = resources.getStringArray(R.array.skills)
         binding.menuSkillEdittext.apply {
-            when (skill){
-                "1" ->{
+            when (skill) {
+                "1" -> {
                     text = Editable.Factory.getInstance().newEditable(items[1])
                 }
-                "3" ->{
+                "3" -> {
                     text = Editable.Factory.getInstance().newEditable(items[2])
                 }
-                "4" ->{
+                "4" -> {
                     text = Editable.Factory.getInstance().newEditable(items[3])
                 }
-                "5" ->{
+                "5" -> {
                     text = Editable.Factory.getInstance().newEditable(items[4])
                 }
-                "6" ->{
+                "6" -> {
                     text = Editable.Factory.getInstance().newEditable(items[5])
                 }
             }
@@ -174,6 +166,26 @@ class NotificationFragment : Fragment() {
         RequestPreferences.setNotifyRequest(requireContext(), "$query,$remote,$salary,$skill")
     }
 
+    private fun saveNotifyState() {
+        RequestPreferences.setNotifyState(context!!, notify)
+    }
+
+    private fun enableNotify() {
+        val constraints = Constraints.Builder()
+            .setRequiredNetworkType(NetworkType.NOT_ROAMING)
+            .build()
+        val periodicRequest = PeriodicWorkRequest
+            .Builder(PollWorker::class.java, 2, TimeUnit.HOURS)
+            .setConstraints(constraints)
+            .build()
+        WorkManager.getInstance(context!!)
+            .enqueueUniquePeriodicWork(
+                NOTIFY_WORK,
+                ExistingPeriodicWorkPolicy.KEEP,
+                periodicRequest
+            )
+    }
+
     private fun remoteButton() {
         if (remote == "") {
             remote = "true"
@@ -194,9 +206,10 @@ class NotificationFragment : Fragment() {
         }
     }
 
-    private fun notifyButton(){
+    private fun notifyButton() {
         if (!notify) {
             notify = true
+            enableNotify()
             binding.notificationButton.apply {
                 background =
                     ContextCompat.getDrawable(requireContext(), R.drawable.white_stroke_green)
@@ -209,6 +222,7 @@ class NotificationFragment : Fragment() {
                 )
             }
         } else if (notify) {
+            WorkManager.getInstance(context!!).cancelUniqueWork(NOTIFY_WORK)
             notify = false
             binding.notificationButton.apply {
                 background =
@@ -222,5 +236,6 @@ class NotificationFragment : Fragment() {
                 )
             }
         }
+        saveNotifyState()
     }
 }

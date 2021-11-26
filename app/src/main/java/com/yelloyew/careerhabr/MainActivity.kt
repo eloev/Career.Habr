@@ -1,5 +1,7 @@
 package com.yelloyew.careerhabr
 
+import android.content.Context
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.core.view.isVisible
@@ -15,13 +17,18 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
 
-
         val navController = findNavController(R.id.host_fragment)
         bottomNavigation = findViewById(R.id.bottom_nav)
         bottomNavigation.setupWithNavController(navController)
     }
 
-    fun hideBottomNav(hide: Boolean){
+    fun hideBottomNav(hide: Boolean) {
         bottomNavigation.isVisible = !hide
+    }
+
+    companion object {
+        fun newIntent(context: Context) : Intent {
+            return Intent(context, MainActivity::class.java)
+        }
     }
 }

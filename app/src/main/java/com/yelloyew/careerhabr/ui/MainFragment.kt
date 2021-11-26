@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.os.VibrationEffect
 import android.os.Vibrator
 import android.text.Editable
-import android.util.Log
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.ArrayAdapter
@@ -50,15 +49,12 @@ class MainFragment : Fragment() {
     private var salary = ""
     private var qid = ""
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        mainViewModel.eraseList()
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        mainViewModel.eraseList()
+        mainViewModel.page = 1
         _binding = FragmentMainBinding.inflate(inflater, container, false)
 
         binding.apply {
@@ -82,10 +78,10 @@ class MainFragment : Fragment() {
             if (sharedRequest[1].isNotBlank()) remoteButtonClick()
             salary = sharedRequest[2]
             qid = sharedRequest[3]
-            if (sharedRequest[0].isNotBlank()) binding.salaryText.text =
-                Editable.Factory.getInstance().newEditable(salary)
-            if (sharedRequest[2].isNotBlank()) binding.searchText.text =
+            if (sharedRequest[0].isNotBlank()) binding.searchText.text =
                 Editable.Factory.getInstance().newEditable(query)
+            if (sharedRequest[2].isNotBlank()) binding.salaryText.text =
+                Editable.Factory.getInstance().newEditable(salary)
         }
         return binding.root
     }

@@ -7,6 +7,7 @@ import androidx.preference.PreferenceManager
 private const val PREF_SEARCH_REQUEST = "searchRequest"
 private const val PREF_NOTIFY_REQUEST = "notifyRequest"
 private const val PREF_NOTIFY_LAST_URLS = "lastUrls"
+private const val PREF_NOTIFY_STATE = "notifyState"
 
 object RequestPreferences {
 
@@ -38,5 +39,16 @@ object RequestPreferences {
     fun setLastUrls(context: Context, response: String){
         PreferenceManager.getDefaultSharedPreferences(context)
             .edit { putString(PREF_NOTIFY_LAST_URLS, response) }
+    }
+
+    fun getNotifyState(context: Context): Boolean{
+        return PreferenceManager.getDefaultSharedPreferences(context)
+            .getBoolean(PREF_NOTIFY_STATE, false)
+    }
+
+    fun setNotifyState(context: Context, isOn:Boolean){
+        PreferenceManager.getDefaultSharedPreferences(context).edit{
+            putBoolean(PREF_NOTIFY_STATE, isOn)
+        }
     }
 }
