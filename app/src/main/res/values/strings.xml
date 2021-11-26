@@ -23,6 +23,6 @@
     <string name="like">Нравится</string>
     <string name="notification_title">Уведомления</string>
     <string name="notification_hint">Присылать уведомления о новых вакансиях?</string>
-    <string name="notification_no">Не уведомлять</string>
-    <string name="notification_yes">Уведомлять</string>
+    <string name="notification_no">Не уведомляю</string>
+    <string name="notification_yes">Уведомляю</string>
 </resources>

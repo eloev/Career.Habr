@@ -26,7 +26,7 @@ class MainViewModel : ViewModel() {
                 page = 1
                 newRequest = request
             }
-            vacancies.postValue(jsoupAdapter.getVacancies(("$request&page=$page"), page))
+            vacancies.postValue(jsoupAdapter.getVacancies("$request&page=$page"))
             Log.d("tag3", "$request&page=$page")
         }
         return vacancies

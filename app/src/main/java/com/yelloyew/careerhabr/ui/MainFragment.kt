@@ -77,13 +77,15 @@ class MainFragment : Fragment() {
 
         val sharedRequest =
             RequestPreferences.getStoredRequest(requireContext()).split(",").toTypedArray()
-        if (sharedRequest.size == 3) {
+        if (sharedRequest.size == 4) {
             query = sharedRequest[0]
             if (sharedRequest[1].isNotBlank()) remoteButtonClick()
             salary = sharedRequest[2]
-            binding.salaryText.text = Editable.Factory.getInstance().newEditable(salary)
-            binding.searchText.text = Editable.Factory.getInstance().newEditable(query)
-            Log.d("tag2", "oncreate")
+            qid = sharedRequest[3]
+            if (sharedRequest[0].isNotBlank()) binding.salaryText.text =
+                Editable.Factory.getInstance().newEditable(salary)
+            if (sharedRequest[2].isNotBlank()) binding.searchText.text =
+                Editable.Factory.getInstance().newEditable(query)
         }
         return binding.root
     }
@@ -130,6 +132,25 @@ class MainFragment : Fragment() {
 
                     //спиннер квалификации
                     val items = resources.getStringArray(R.array.skills)
+                    binding.menuSkillEdittext.apply {
+                        when (qid){
+                            "1" ->{
+                                text = Editable.Factory.getInstance().newEditable(items[1])
+                            }
+                            "3" ->{
+                                text = Editable.Factory.getInstance().newEditable(items[2])
+                            }
+                            "4" ->{
+                                text = Editable.Factory.getInstance().newEditable(items[3])
+                            }
+                            "5" ->{
+                                text = Editable.Factory.getInstance().newEditable(items[4])
+                            }
+                            "6" ->{
+                                text = Editable.Factory.getInstance().newEditable(items[5])
+                            }
+                        }
+                    }
                     val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
                     (binding.menuSkillEdittext as? AutoCompleteTextView)?.setAdapter(adapter)
                     binding.menuSkillEdittext.setOnItemClickListener { _, _, i, _ ->
@@ -195,7 +216,7 @@ class MainFragment : Fragment() {
 
     private fun sendRequest() {
         mainViewModel.getData("&q=$query&remote=$remote&salary=$salary&qid=$qid")
-        RequestPreferences.setStoredRequest(requireContext(), "$query,$remote,$salary")
+        RequestPreferences.setStoredRequest(requireContext(), "$query,$remote,$salary,$qid")
         binding.refresh.isRefreshing = true
     }
 

@@ -12,7 +12,7 @@ class JsoupAdapter private constructor(context: Context) {
     private var listData = mutableListOf<Vacancy>()
     private var vacancyInfo = ""
 
-    fun getVacancies(response: String, page: Int) : MutableList<Vacancy> {
+    fun getVacancies(response: String) : MutableList<Vacancy> {
         try {
             val doc = Jsoup.connect(URL + response).get()
             val vacancies = doc.select("div.vacancy-card")
@@ -43,8 +43,7 @@ class JsoupAdapter private constructor(context: Context) {
 
                 val date = vacancy.select("div.vacancy-card__date")
                     .text()
-                val itemPosition = i + 1 + 15*(page-1)
-                listData.add(Vacancy(vacancyUrl, company, position, metaInfo, salary, skill, logo, date, itemPosition))
+                listData.add(Vacancy(vacancyUrl, company, position, metaInfo, salary, skill, logo, date))
             }
         } catch (e: IOException) {
             e.printStackTrace()
@@ -76,6 +75,25 @@ class JsoupAdapter private constructor(context: Context) {
             e.printStackTrace()
         }
         return vacancyInfo
+    }
+
+    fun getUrlVacancy(response: String) : MutableList<String> {
+        val data = mutableListOf<String>()
+        try {
+            val doc = Jsoup.connect(URL + response).get()
+            val vacancies = doc.select("div.vacancy-card")
+
+            for ((i, vacancy) in vacancies.withIndex()) {
+
+                val vacancyUrl = "https://career.habr.com" + vacancy.select("div.vacancy-card__title")
+                    .select("a")
+                    .attr("href")
+                data.add(vacancyUrl)
+            }
+        } catch (e: IOException) {
+            e.printStackTrace()
+        }
+        return data
     }
 
     companion object{
