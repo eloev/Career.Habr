@@ -79,7 +79,6 @@ class PollWorker(val context: Context, workerParams: WorkerParameters) :
             }
         }
 
-        Log.d(TAG, notificationCounter.toString())
         Log.d(TAG, notifyText)
 
         var urlsToSave = ""

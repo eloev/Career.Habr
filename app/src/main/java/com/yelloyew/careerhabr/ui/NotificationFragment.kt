@@ -43,7 +43,6 @@ class NotificationFragment : Fragment() {
         val notifyRequest =
             RequestPreferences.getNotifyRequest(requireContext()).split(",").toTypedArray()
         if (notifyRequest.size == 4) {
-            Log.d("tag", notifyRequest.contentToString())
             query = notifyRequest[0]
             if (notifyRequest[1].isNotBlank()) remoteButton()
             salary = notifyRequest[2]
@@ -72,45 +71,23 @@ class NotificationFragment : Fragment() {
         val items = resources.getStringArray(R.array.skills)
         binding.menuSkillEdittext.apply {
             when (skill) {
-                "1" -> {
-                    text = Editable.Factory.getInstance().newEditable(items[1])
-                }
-                "3" -> {
-                    text = Editable.Factory.getInstance().newEditable(items[2])
-                }
-                "4" -> {
-                    text = Editable.Factory.getInstance().newEditable(items[3])
-                }
-                "5" -> {
-                    text = Editable.Factory.getInstance().newEditable(items[4])
-                }
-                "6" -> {
-                    text = Editable.Factory.getInstance().newEditable(items[5])
-                }
+                "1" -> text = Editable.Factory.getInstance().newEditable(items[1])
+                "3" -> text = Editable.Factory.getInstance().newEditable(items[2])
+                "4" -> text = Editable.Factory.getInstance().newEditable(items[3])
+                "5" -> text = Editable.Factory.getInstance().newEditable(items[4])
+                "6" -> text = Editable.Factory.getInstance().newEditable(items[5])
             }
         }
         val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
         (binding.menuSkillEdittext as? AutoCompleteTextView)?.setAdapter(adapter)
         binding.menuSkillEdittext.setOnItemClickListener { _, _, i, _ ->
             when (i) {
-                0 -> {
-                    skill = ""
-                }
-                1 -> {
-                    skill = "1"
-                }
-                2 -> {
-                    skill = "3"
-                }
-                3 -> {
-                    skill = "4"
-                }
-                4 -> {
-                    skill = "5"
-                }
-                5 -> {
-                    skill = "6"
-                }
+                0 -> skill = ""
+                1 -> skill = "1"
+                2 -> skill = "3"
+                3 -> skill = "4"
+                4 -> skill = "5"
+                5 -> skill = "6"
             }
             saveParams()
         }

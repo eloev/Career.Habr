@@ -137,7 +137,6 @@
                 android:hint="@string/item_search"
                 android:inputType="text"
                 android:maxLines="1"
-                android:text="@string/search_hint"
                 android:textColor="@color/white" />
 
         </com.google.android.material.textfield.TextInputLayout>

@@ -88,10 +88,11 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="16dp"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/marginEnd"
             app:layout_constraintHorizontal_bias="0"
-            app:layout_constraintStart_toEndOf="@id/metaInfo1"
-            app:layout_constraintTop_toBottomOf="@id/position"
+            app:layout_constraintStart_toEndOf="@id/logo"
+            app:layout_constraintTop_toBottomOf="@id/metaInfo1"
             tools:text="Full time work day" />
 
         <TextView
@@ -103,7 +104,7 @@
             app:layout_constraintEnd_toEndOf="@id/marginEnd"
             app:layout_constraintHorizontal_bias="0"
             app:layout_constraintStart_toEndOf="@id/logo"
-            app:layout_constraintTop_toBottomOf="@id/metaInfo1"
+            app:layout_constraintTop_toBottomOf="@id/metaInfo2"
             tools:text="You can remotely" />
 
         <TextView

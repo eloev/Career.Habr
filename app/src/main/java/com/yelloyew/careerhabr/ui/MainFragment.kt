@@ -91,7 +91,7 @@ class MainFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         mainViewModel.getData("&q=$query&remote=$remote&salary=$salary&qid=$qid").observe(
-            viewLifecycleOwner, Observer {
+            viewLifecycleOwner, {
                 binding.tvIfNull.isVisible = it.size == 0
                 adapter.setData(it)
                 binding.refresh.isRefreshing = false
@@ -131,46 +131,24 @@ class MainFragment : Fragment() {
                     //спиннер квалификации
                     val items = resources.getStringArray(R.array.skills)
                     binding.menuSkillEdittext.apply {
-                        when (qid){
-                            "1" ->{
-                                text = Editable.Factory.getInstance().newEditable(items[1])
-                            }
-                            "3" ->{
-                                text = Editable.Factory.getInstance().newEditable(items[2])
-                            }
-                            "4" ->{
-                                text = Editable.Factory.getInstance().newEditable(items[3])
-                            }
-                            "5" ->{
-                                text = Editable.Factory.getInstance().newEditable(items[4])
-                            }
-                            "6" ->{
-                                text = Editable.Factory.getInstance().newEditable(items[5])
-                            }
+                        when (qid) {
+                            "1" -> text = Editable.Factory.getInstance().newEditable(items[1])
+                            "3" -> text = Editable.Factory.getInstance().newEditable(items[2])
+                            "4" -> text = Editable.Factory.getInstance().newEditable(items[3])
+                            "5" -> text = Editable.Factory.getInstance().newEditable(items[4])
+                            "6" -> text = Editable.Factory.getInstance().newEditable(items[5])
                         }
                     }
                     val adapter = ArrayAdapter(requireContext(), R.layout.textview_item, items)
                     (binding.menuSkillEdittext as? AutoCompleteTextView)?.setAdapter(adapter)
                     binding.menuSkillEdittext.setOnItemClickListener { _, _, i, _ ->
                         when (i) {
-                            0 -> {
-                                qid = ""
-                            }
-                            1 -> {
-                                qid = "1"
-                            }
-                            2 -> {
-                                qid = "3"
-                            }
-                            3 -> {
-                                qid = "4"
-                            }
-                            4 -> {
-                                qid = "5"
-                            }
-                            5 -> {
-                                qid = "6"
-                            }
+                            0 -> qid = ""
+                            1 -> qid = "1"
+                            2 -> qid = "3"
+                            3 -> qid = "4"
+                            4 -> qid = "5"
+                            5 -> qid = "6"
                         }
                         sendRequest()
                     }
